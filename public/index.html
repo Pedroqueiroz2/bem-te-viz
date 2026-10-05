@@ -28,9 +28,13 @@
             </p>
         </section>
 
-        <div style="padding: 40px 70px;">
-            <p class="eyebrow">Pesquisar Pássaro</p>
+        <div style="padding: 40px 70px 20px;">
+            <p class="eyebrow">Pesquisar Pássaro (Hierárquico / Splay Tree)</p>
             <input type="text" id="input-busca" placeholder="Digite o nome popular ou científico..." style="padding: 12px; width: 100%; max-width: 400px; border: 1px solid var(--line); border-radius: 4px; font-family: 'Manrope';">
+            <div id="tree-status-box" style="margin-top: 15px; padding: 10px 16px; background: rgba(49, 88, 70, 0.08); border-left: 3px solid var(--moss); border-radius: 4px; font-size: 13px; color: var(--moss); display: flex; align-items: center; gap: 8px; max-width: 600px;">
+                <span>🌳 <b>Splay Tree:</b></span>
+                <span id="tree-root-display">Carregando...</span>
+            </div>
         </div>
 
         <main style="padding: 0 70px 60px;">
@@ -90,6 +94,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
