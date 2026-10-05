@@ -1,0 +1,84 @@
+:root {
+    --ink: #18352a;
+    --moss: #315846;
+    --fern: #557765;
+    --cream: #f3f1e9;
+    --paper: #fbfaf6;
+    --clay: #b26b45;
+    --line: #dce1d8;
+}
+
+body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: "Manrope", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3 {
+    font-family: "DM Serif Display", serif;
+    color: var(--ink);
+}
+
+.catalog-header {
+    height: 82px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: rgba(251,250,246,.94);
+}
+
+.intro-container {
+    background-color: var(--cream);
+    padding: 60px 70px;
+    border-bottom: 1px solid var(--line);
+}
+
+.eyebrow {
+    color: var(--clay);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.bird-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+    cursor: pointer;
+}
+
+.bird-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(36,56,44,.1);
+}
+
+.meta-box {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 22px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.meta-box small {
+    color: #929e96; 
+    font-size: 10px;
+    font-weight: 700; 
+    letter-spacing: .16em; 
+    text-transform: uppercase;
+}
+
+.scientific-name {
+    color: var(--fern);
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-style: italic;
+}
