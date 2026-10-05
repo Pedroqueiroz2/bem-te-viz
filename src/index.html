@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Interativo de Aves</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- TELA 1: HOME / CATÁLOGO -->
+    <div id="tela-home" class="pagina">
+        <header class="catalog-header">
+            <div></div>
+            <div style="color: #557765; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;">
+                CUB-200 DATASET
+            </div>
+        </header>
+
+        <section class="intro-container">
+            <p class="eyebrow">Pesquisa Hierárquica Avançada</p>
+            <h1 style="font-size: 58px; font-weight: 400; line-height: 1; margin: 0 0 15px 0;">
+                Descubra a <i>Avifauna</i> Brasileira
+            </h1>
+            <p style="color: #647168; font-size: 14px; line-height: 1.6; max-width: 500px; margin-bottom: 25px;">
+                Explore o acervo multimídia estruturado com Splay Tree
+            </p>
+        </section>
+
+        <div style="padding: 40px 70px;">
+            <p class="eyebrow">Pesquisar Pássaro</p>
+            <input type="text" id="input-busca" placeholder="Digite o nome popular ou científico..." style="padding: 12px; width: 100%; max-width: 400px; border: 1px solid var(--line); border-radius: 4px; font-family: 'Manrope';">
+        </div>
+
+        <main style="padding: 0 70px 60px;">
+            <p class="eyebrow">Acervo Selecionado</p>
+            <h2 style="font-size: 36px; font-weight: 400; margin-bottom: 30px;">Espécies Registradas</h2>
+            
+            <!-- Os cards serão injetados dinamicamente via JavaScript aqui -->
+            <div id="grid-aves" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;"></div>
+        </main>
+    </div>
+
+    <!-- TELA 2: DETALHES -->
+    <div id="tela-detalhe" class="pagina" style="display: none;">
+        <header class="catalog-header" style="justify-content: space-between;">
+            <div>
+                <b>DETALHES</b>
+                <small id="detalhe-numero"></small>
+            </div>
+            <button id="btn-voltar" style="padding: 8px 16px; cursor: pointer;">⬅ Voltar ao Início</button>
+        </header>
+
+        <div style="padding: 40px 70px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px;">
+            <div>
+                <p class="eyebrow">Espécie Selecionada</p>
+                <h1 id="detalhe-nome" style="font-size: 48px; margin: 0 0 5px 0;"></h1>
+                <p id="detalhe-cientifico" class="scientific-name"></p>
+                
+                <div style="margin-top: 25px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line);">
+                    <img id="detalhe-img" style="width: 100%; height: 380px; object-fit: cover;">
+                </div>
+
+                <h3 style="margin-top: 25px;">🎵 Reproduzir Canto da Espécie</h3>
+                <audio id="detalhe-audio" controls style="width: 100%; margin-top: 10px;"></audio>
+            </div>
+
+            <div>
+                <p class="eyebrow">Dataset CUB-200</p>
+                <h2 style="font-size: 32px; margin-bottom: 20px;">Informações Técnicas</h2>
+                
+                <div class="meta-box">
+                    <small>FAMÍLIA & GÊNERO</small>
+                    <p id="detalhe-familia-genero"></p>
+                </div>
+                <div class="meta-box">
+                    <small>HABITAT</small>
+                    <p id="detalhe-habitat"></p>
+                </div>
+                <div class="meta-box">
+                    <small>DIETA</small>
+                    <p id="detalhe-dieta"></p>
+                </div>
+                <div class="meta-box">
+                    <small>STATUS</small>
+                    <p id="detalhe-status"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
