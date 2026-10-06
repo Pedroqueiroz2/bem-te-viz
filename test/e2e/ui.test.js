@@ -240,6 +240,60 @@ describe("contador, ranking e histórico", { skip: skip() }, () => {
   });
 });
 
+describe("remoção da árvore (demonstração)", { skip: skip() }, () => {
+  const open = async (name) => {
+    await page.go(url(SPECIES(name)));
+    await page.until(`document.getElementById('spName').textContent === ${JSON.stringify(name)}`, `abrir ${name}`);
+  };
+
+  test("remover exige dois cliques e tira a ave da lista, do histórico e da navegação", async () => {
+    await page.go(url("index.html"));
+    await page.ev("localStorage.clear()");
+    await open("Alpha Bird");
+    await open("Beta Bird");                  // fica no histórico e no ranking
+    await page.ev("document.getElementById('removeBird').click()");
+    assert.equal(await page.ev("document.getElementById('spName').textContent"), "Beta Bird", "um clique só pede confirmação");
+    assert.match(await page.ev("document.getElementById('removeBird').textContent"), /Clique de novo/);
+    await page.ev("document.getElementById('removeBird').click()");
+
+    await page.until("!document.getElementById('viewList').hidden", "voltar à lista");
+    assert.equal(await page.ev("document.getElementById('notice').hidden"), false);
+    assert.match(await page.ev("document.getElementById('notice').textContent"), /Beta Bird/);
+    assert.equal((await page.ev(names)).length, 6);
+    assert.ok(!(await page.ev(names)).includes("Beta Bird"));
+    assert.ok(!(await page.ev("[...document.querySelectorAll('#recentList .name')].map(n => n.textContent)")).includes("Beta Bird"), "saiu do histórico");
+
+    await page.type("#q", "beta");
+    assert.deepEqual(await page.ev(names), []);
+    await page.type("#q", "");
+
+    await open("Alphabet Wren");              // vizinha da removida
+    assert.equal(await page.ev("document.querySelector('#nextBird b').textContent"), "Delta <b>Bold</b> Bird", "a navegação pula a ave removida");
+  });
+
+  test("ranking não mostra a ave removida e o endereço dela volta para a lista", async () => {
+    await page.go(url("index.html"));
+    await page.until("document.querySelectorAll('#destaque .mini').length > 0");
+    assert.ok(!(await page.ev("[...document.querySelectorAll('#destaque .name')].map(n => n.textContent)")).includes("Beta Bird"));
+    await page.go(url(SPECIES("Beta Bird")));
+    await page.until("!document.getElementById('viewList').hidden", "ave removida volta para a lista");
+  });
+
+  test("a remoção continua depois do F5", async () => {
+    await page.go(url("especies.html"));
+    await page.until("document.querySelectorAll('#all .mini').length === 6", "6 aves depois do F5");
+    await page.reload();
+    await page.until("document.querySelectorAll('#all .mini').length === 6", "6 aves depois de recarregar");
+  });
+
+  test("reiniciar o servidor restaura a ave", async () => {
+    await server.stop();
+    server = await startServer({ port: server.port, catalogDir: fixture });
+    await page.go(url("especies.html"));
+    await page.until("document.querySelectorAll('#all .mini').length === 7", "7 aves de volta");
+  });
+});
+
 describe("robustez", { skip: skip() }, () => {
   test("a inicial mostra fotos e gravações do catálogo", async () => {
     await page.go(url("index.html"));

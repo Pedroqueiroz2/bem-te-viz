@@ -10,7 +10,9 @@ const STATE_KEY = "bem-te-viz-state";
  * (cada `npm start` gera uma sessão nova e tudo começa zerado). Recarregar a
  * página mantém tudo: o log de acessos é reproduzido na árvore e nas listas, o
  * que devolve contadores, ranking e histórico exatamente como estavam.
- *   log     nomes das aves abertas, na ordem
+ *   log     o que aconteceu, na ordem: o nome de uma ave aberta ou { remove: nome }
+ *           quando uma ave foi removida da árvore (o servidor continua mandando o
+ *           catálogo inteiro, então a remoção precisa ser reproduzida também)
  *   cutoff  tamanho do log quando o histórico foi limpado pela última vez
  */
 let state = { session: "", log: [], cutoff: 0 };
@@ -22,6 +24,16 @@ function applyAccess(name, toRecent) {
   if (!bird) return undefined;
   ranking.access(bird.species, tree.getAccessCount(bird.species));   // contador já atualizado pela árvore
   if (toRecent) recent.add(bird.species);
+  return bird;
+}
+
+/** Uma remoção: tira a ave da árvore e também do ranking, do histórico e da navegação. */
+function applyRemoval(name) {
+  const bird = tree.remove(name);
+  if (!bird) return undefined;
+  ranking.remove(bird.species);
+  recent.remove(bird.species);
+  browse.remove(bird.species);
   return bird;
 }
 
@@ -51,7 +63,10 @@ async function load() {
   state = saved?.session === data.session && Array.isArray(saved.log)
     ? saved
     : { session: data.session, log: [], cutoff: 0 };
-  state.log.forEach((name, i) => applyAccess(name, i >= state.cutoff));
+  state.log.forEach((entry, i) => {
+    if (typeof entry === "string") applyAccess(entry, i >= state.cutoff);
+    else applyRemoval(entry.remove);
+  });
   saveState();
 }
 
@@ -101,6 +116,18 @@ export function openBird(name) {
 
 /** Contador de acessos da ave na árvore (sem reorganizar). */
 export const accessCount = (name) => tree.getAccessCount(name);
+
+/**
+ * Remove a ave da árvore (e do ranking, histórico e navegação). Devolve a ave
+ * removida, ou undefined se ela não existe. Vale até o servidor reiniciar.
+ */
+export function removeBird(name) {
+  const bird = applyRemoval(name);
+  if (!bird) return undefined;
+  state.log.push({ remove: bird.species });
+  saveState();
+  return bird;
+}
 
 /** Ave anterior e próxima (null no começo e no fim da lista), sem reorganizar a árvore. */
 export function neighbors(name) {

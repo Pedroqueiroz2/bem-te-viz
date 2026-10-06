@@ -119,3 +119,7 @@ button, input { font: inherit; color: inherit; }
 
 /* Contador de acessos da ave (no cartão dela) */
 .cnt { position: absolute; right: 10px; bottom: 10px; z-index: 1; min-width: 26px; text-align: center; padding: 3px 9px; border-radius: 999px; background: rgba(16,32,63,.78); color: #fff; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Aviso curto e botão de ação perigosa */
+.notice { margin: 22px 0 0; padding: 12px 16px; border-radius: 12px; border-left: 4px solid var(--blue); background: var(--chip); font-size: 14px; }
+.link.danger { color: var(--red); background: none; border: 0; cursor: pointer; font-weight: 700; font-size: 13px; padding: 0; }

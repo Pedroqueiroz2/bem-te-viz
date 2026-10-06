@@ -32,6 +32,7 @@
       </section>
 
       <div class="wrap">
+        <p class="notice" id="notice" role="status" hidden></p>
         <section class="sec" id="secRecent" hidden>
           <div class="sec-head"><h2>Histórico</h2><p>Aves que você já abriu</p><button class="link" id="clearRecent" type="button">Limpar histórico</button></div>
           <ul class="hist" id="recentList"></ul>
@@ -85,6 +86,10 @@
         <section class="sec" id="secPhotos" hidden>
           <div class="strip-head"><strong>Todas as fotos</strong><span id="spStripHint"></span></div>
           <div class="strip" id="spStrip" role="list"></div>
+        </section>
+
+        <section class="sec" id="secRemove">
+          <button class="link danger" id="removeBird" type="button">Remover esta ave da árvore (demonstração)</button>
         </section>
 
         <section class="sec" id="secHist">

@@ -1,7 +1,7 @@
 import "../core/layout.js";
 import { $, norm, fmt, rng, esc, fotos, plural } from "../core/util.js";
 import {
-  ready, meta, allBirds, searchBirds, openBird, accessCount, neighbors, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
+  ready, meta, allBirds, searchBirds, openBird, removeBird, accessCount, neighbors, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
 } from "../data/catalog.js";
 import { miniCard, birdImage } from "../components/cards.js";
 import { playAudio, audioDuration } from "../components/audio.js";
@@ -130,6 +130,7 @@ function renderHist(currentName) {
 
 function openSpecies(name) {
   resetAudio();
+  resetRemoveButton();
   const before = recentBirds();           // histórico antes desta visita
   const bird = openBird(name);            // busca na árvore (afunila) e registra nas listas
   if (!bird) { location.hash = "#/"; return; }
@@ -180,6 +181,34 @@ function openSpecies(name) {
   $("secHist").hidden = !others.length;
   $("hist").innerHTML = others.map((b) => card(b)).join("");
 }
+/* ---- Remoção (demonstração): dois cliques para confirmar ---- */
+let removeTimer = 0;
+let noticeTimer = 0;
+const REMOVE_LABEL = "Remover esta ave da árvore (demonstração)";
+function resetRemoveButton() {
+  clearTimeout(removeTimer);
+  $("removeBird").textContent = REMOVE_LABEL;
+  $("removeBird").dataset.armed = "";
+}
+$("removeBird").addEventListener("click", () => {
+  if (!current) return;
+  if (!$("removeBird").dataset.armed) {
+    $("removeBird").dataset.armed = "1";
+    $("removeBird").textContent = `Clique de novo para remover “${current.species}”`;
+    removeTimer = setTimeout(resetRemoveButton, 4000);
+    return;
+  }
+  const name = current.species;
+  resetRemoveButton();
+  removeBird(name);
+  current = null;
+  $("notice").textContent = `“${name}” foi removida da árvore, do ranking, do histórico e da navegação. Reinicie o servidor (npm start) para restaurar.`;
+  $("notice").hidden = false;
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => { $("notice").hidden = true; }, 8000);
+  location.hash = "#/";
+});
+
 $("clearRecent").addEventListener("click", () => { clearRecent(); renderAll(); });
 $("clearHist").addEventListener("click", () => { clearRecent(); renderHist(current?.species); });
 
