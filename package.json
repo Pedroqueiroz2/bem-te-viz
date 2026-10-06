@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test \"test/*.test.js\"",
-    "demo": "node demo.js"
+    "demo": "node demo.js",
+    "test:e2e": "node --test --test-concurrency=1 \"test/e2e/*.test.js\""
   }
 }

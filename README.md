@@ -46,8 +46,11 @@ Depois de baixar `bem-te-viz-package.zip` da saída do Kaggle, extraia-o em `dat
 ## Testes
 
 ```sh
-npm test
+npm test          # estruturas de dados, carregador do catálogo e servidor
+npm run test:e2e  # interface em um Chrome real (desktop), com um catálogo de teste
 ```
+
+Os testes de interface precisam do Google Chrome instalado (ou da variável `CHROME_PATH` apontando para ele); sem ele, são pulados. Cobrem a busca, a página da espécie, o carrossel, as galerias, a ordem do ranking, o histórico, o contador, o F5 e o reinício do servidor, além de casos de borda (ave sem foto ou áudio, nome com HTML, endereço inexistente, armazenamento do navegador bloqueado). Não há testes para celular.
 
 ## Fontes e créditos
 
