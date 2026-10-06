@@ -1,0 +1,10 @@
+:root {
+  color-scheme: light;
+  --bg: #ffffff; --card: #ffffff; --fg: #10203f; --muted: #5b6985; --line: #e1e7f1; --chip: #e9f0ff;
+  --blue: #1550e8; --blue-ink: #ffffff; --link: #1550e8;
+  --yellow: #ffc20e; --yellow-ink: #10203f; --green: #0f9d58; --red: #e5303a;
+  --canopy-a: #1c5a34; --canopy-b: #2f7d43; --navy: #14284b; --navy-ink: #e8eefc;
+  --shadow: 0 1px 2px rgba(16, 32, 63, .06), 0 6px 18px rgba(16, 32, 63, .06);
+  --display: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+}

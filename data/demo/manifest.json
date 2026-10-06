@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-06T00:00:00+00:00",
+  "sources": {
+    "images": "Kaggle: wenewone/cub2002011 (CUB-200-2011)",
+    "audio": "Kaggle: gevorgalaverdyan/cub-200-bird-audio-dataset; gravações Xeno-Canto"
+  },
+  "configuration": {
+    "demoSpeciesLimit": 12,
+    "maxImagesPerSpecies": 1,
+    "maxAudiosPerSpecies": 1,
+    "allowMediaExport": true,
+    "imageExtensions": [
+      ".jpeg",
+      ".jpg",
+      ".png",
+      ".webp"
+    ],
+    "audioExtensions": [
+      ".flac",
+      ".m4a",
+      ".mp3",
+      ".ogg",
+      ".wav"
+    ],
+    "maxAudioBytes": 2000000
+  },
+  "speciesCount": 200,
+  "includedImages": 12,
+  "includedAudios": 8,
+  "validation": {
+    "status": "passed",
+    "errors": []
+  },
+  "matchKey": "campo de espécie e arquivo exatos em metadados reconhecidos; senão, rótulo CUB igual à pasta/nome-base completo após normalização",
+  "sourcePackage": "subconjunto local derivado do pacote multimídia exportado pelo notebook Kaggle"
+}
