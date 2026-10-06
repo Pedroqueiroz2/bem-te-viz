@@ -72,6 +72,19 @@ export class FrequencyList {
     }
   }
 
+  /** Tira o valor da lista. Devolve true se ele existia. */
+  remove(value) {
+    let prev = null;
+    for (let cur = this.#head; cur !== null; prev = cur, cur = cur.next) {
+      if (cur.value !== value) continue;
+      if (prev === null) this.#head = cur.next;
+      else prev.next = cur.next;
+      this.#size--;
+      return true;
+    }
+    return false;
+  }
+
   /** Primeiros `n` valores, do maior para o menor contador. */
   take(n) {
     const out = [];
@@ -105,7 +118,7 @@ export class RecentList {
   }
 
   add(value) {
-    this.#remove(value);
+    this.remove(value);
     const node = new ListNode(value);
     node.next = this.#head;
     this.#head = node;
@@ -125,15 +138,17 @@ export class RecentList {
     return out;
   }
 
-  #remove(value) {
+  /** Tira o valor do histórico. Devolve true se ele estava lá. */
+  remove(value) {
     let prev = null;
     for (let cur = this.#head; cur !== null; prev = cur, cur = cur.next) {
       if (cur.value !== value) continue;
       if (prev === null) this.#head = cur.next;
       else prev.next = cur.next;
       this.#size--;
-      return;
+      return true;
     }
+    return false;
   }
 
   #dropLast() {
@@ -187,6 +202,18 @@ export class DoublyLinkedList {
       this.#tail = node;
     }
     this.#size++;
+  }
+
+  /** Desliga o nó do valor, ligando o anterior ao próximo. Devolve true se ele existia. */
+  remove(value) {
+    const node = this.find(value);
+    if (node === null) return false;
+    if (node.prev === null) this.#head = node.next;
+    else node.prev.next = node.next;
+    if (node.next === null) this.#tail = node.prev;
+    else node.next.prev = node.prev;
+    this.#size--;
+    return true;
   }
 
   /** Nó com o valor (com `prev` e `next`), ou null se não existir. */

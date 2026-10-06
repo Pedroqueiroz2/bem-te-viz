@@ -236,6 +236,49 @@ export class SplayTree {
   }
 
   /**
+   * Remove a espécie e devolve a ave removida (`undefined` se não existir; nesse
+   * caso a árvore não é tocada).
+   *
+   * Remoção clássica da Árvore Afunilada, adaptada à modificação por frequência:
+   * - o nó é levado ao topo da subárvore em que está (splay), as duas subárvores
+   *   dele são separadas e juntadas de novo: o maior nó da esquerda sobe e recebe
+   *   a direita como filho;
+   * - se o nó removido NÃO é a raiz, a raiz global é preservada (a ave mais
+   *   acessada continua no topo), igual à regra de proteção da busca;
+   * - se é a raiz, a nova raiz é a antecessora (maior chave da esquerda) ou, se
+   *   não houver esquerda, a raiz da subárvore direita;
+   * - não conta como acesso: nenhum contador muda, só some o do nó removido.
+   */
+  remove(species) {
+    const key = birdKey(species);
+    if (this.peek(species) === undefined) return undefined;   // ausente: não mexe em nada
+
+    let removed;
+    if (key === this.#root.key) {
+      ({ node: removed, root: this.#root } = this.#removeFrom(this.#root, key));
+    } else if (key < this.#root.key) {
+      ({ node: removed, root: this.#root.left } = this.#removeFrom(this.#root.left, key));
+    } else {
+      ({ node: removed, root: this.#root.right } = this.#removeFrom(this.#root.right, key));
+    }
+    this.#count--;
+    return removed.value;
+  }
+
+  /**
+   * Remove `key` (que existe) da subárvore `sub` e devolve o nó removido e a
+   * nova raiz da subárvore.
+   */
+  #removeFrom(sub, key) {
+    const top = this.#splay(sub, key);   // a chave existe: ela vira a raiz de `sub`
+    if (top.left === null) return { node: top, root: top.right };
+    // a chave é maior que tudo à esquerda: o splay traz o maior nó da esquerda para o topo, sem filho direito
+    const left = this.#splay(top.left, key);
+    left.right = top.right;
+    return { node: top, root: left };
+  }
+
+  /**
    * Aves cujo nome começa com `prefix` (sem acento nem maiúscula), em ordem
    * alfabética. Aproveita a ordem da árvore: todos os nomes com o mesmo início
    * ficam numa faixa contínua, então só desce pelos ramos que podem ter

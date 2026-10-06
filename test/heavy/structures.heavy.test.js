@@ -162,6 +162,81 @@ test("busca por prefixo em 100 mil nós confere com a força bruta e é mais rá
   assert.ok(viaTree.ms * 3 < brute.ms, `árvore ${Math.round(viaTree.ms)} ms contra força bruta ${Math.round(brute.ms)} ms`);
 });
 
+test("remoção: 30 mil operações aleatórias (inserir, buscar, remover) batem com o gabarito", () => {
+  const rnd = rng(2024);
+  const tree = new SplayTree();
+  const model = new Map();   // gabarito: chave -> contador
+  let rootRemovals = 0;
+
+  for (let op = 1; op <= 30000; op++) {
+    const k = key(Math.floor(rnd() * 2000));
+    const roll = rnd();
+    if (roll < 0.35) {
+      tree.insert(bird(k));
+      if (!model.has(k)) model.set(k, 1);
+    } else if (roll < 0.7) {
+      if (tree.search(k)) model.set(k, model.get(k) + 1);
+    } else {
+      const rootBefore = tree.rootSpecies;
+      // metade das remoções mira a própria raiz, para exercitar o caso mais delicado
+      const target = rnd() < 0.5 && rootBefore ? rootBefore : k;
+      const removed = tree.remove(target);
+      assert.equal(removed !== undefined, model.has(target), `remover ${target}`);
+      if (removed) {
+        const k2 = target;
+        model.delete(k2);
+        if (model.size === 0) assert.equal(tree.rootSpecies, null);
+        else if (k2 !== rootBefore) assert.equal(tree.rootSpecies, rootBefore, "remover um nó que não é a raiz preserva a raiz");
+        else {
+          rootRemovals++;
+          const smaller = [...model.keys()].filter((x) => x < k2);
+          if (smaller.length) assert.equal(tree.rootSpecies, smaller.sort().pop(), "nova raiz é a antecessora");
+          else assert.ok(tree.rootSpecies > k2, "sem esquerda, a nova raiz vem da direita");
+        }
+      }
+    }
+    if (op % 3000 === 0) assertOrdered(tree, model.size);
+  }
+
+  assert.ok(rootRemovals > 100, `removeu a raiz ${rootRemovals} vezes`);
+  assert.deepEqual(assertOrdered(tree, model.size), [...model.keys()].sort());
+  for (const [k, count] of model) assert.equal(tree.getAccessCount(k), count, `contador de ${k}`);
+  for (const k of [...model.keys()].slice(0, 1500)) {
+    tree.search(k);
+    const depth = tree.depth(k);
+    assert.ok(depth === 0 || depth === 1, `${k} no nível ${depth} depois das remoções`);
+  }
+  assert.equal(tree.size, model.size);
+});
+
+test("remoção: tirar 100 mil nós, em ordem e em ordem aleatória, esvazia a árvore em tempo razoável", () => {
+  const n = 100000;
+  for (const shuffled of [false, true]) {
+    const rnd = rng(77);
+    const order = Array.from({ length: n }, (_, i) => i);
+    if (shuffled) for (let i = n - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    const tree = new SplayTree();
+    for (let i = 0; i < n; i++) tree.insert(bird(key(i)));
+    const { ms } = timed(() => {
+      for (let step = 0; step < n; step++) assert.equal(tree.remove(key(order[step])).species, key(order[step]));
+    });
+    assert.ok(ms < 8000, `${shuffled ? "aleatória" : "em ordem"}: levou ${Math.round(ms)} ms`);
+    assert.equal(tree.size, 0);
+    assert.equal(tree.height(), 0);
+    assert.equal(tree.rootSpecies, null);
+  }
+});
+
+test("remoção: depois de remover metade dos nós, a ordem e a busca por prefixo continuam corretas", () => {
+  const tree = new SplayTree();
+  for (let i = 0; i < 50000; i++) tree.insert(bird(key(i)));
+  for (let i = 0; i < 50000; i += 2) tree.remove(key(i));   // tira os pares
+  assert.equal(tree.size, 25000);
+  const species = assertOrdered(tree, 25000);
+  assert.ok(species.every((s) => Number(s.slice(1)) % 2 === 1), "só sobraram os ímpares");
+  assert.equal(tree.searchPrefix("k00001").length, 50, "k00001 cobre os números 100 a 199: sobram os 50 ímpares");
+});
+
 /* ===================== Listas encadeadas ===================== */
 
 test("FrequencyList: 20 mil acessos aleatórios batem com o gabarito e ficam em ordem decrescente", () => {
@@ -243,4 +318,54 @@ test("DoublyLinkedList: 200 mil nós, ida e volta consistentes", () => {
     assert.equal(node.prev?.value, k === 0 ? undefined : `v${k - 1}`);
     assert.equal(node.next?.value, k === n - 1 ? undefined : `v${k + 1}`);
   }
+});
+
+test("listas: remoções aleatórias batem com o gabarito (FrequencyList, RecentList, DoublyLinkedList)", () => {
+  const rnd = rng(8);
+  const freq = new FrequencyList();
+  const recent = new RecentList(20);
+  const dll = new DoublyLinkedList();
+  const counts = new Map();
+  let freqModel = [];
+  let recentModel = [];
+  let dllModel = [];
+
+  for (let i = 0; i < 300; i++) { dll.append(`v${i}`); dllModel.push(`v${i}`); }
+
+  for (let op = 0; op < 15000; op++) {
+    const v = `v${Math.floor(rnd() * 300)}`;
+    if (rnd() < 0.3) {
+      assert.equal(freq.remove(v), counts.has(v));
+      counts.delete(v);
+      freqModel = freqModel.filter((e) => e.value !== v);
+      recent.remove(v);
+      recentModel = recentModel.filter((x) => x !== v);
+      assert.equal(dll.remove(v), dllModel.includes(v));
+      dllModel = dllModel.filter((x) => x !== v);
+    } else {
+      const count = (counts.get(v) ?? 1) + 1;
+      counts.set(v, count);
+      freq.access(v, count);
+      freqModel = freqModel.filter((e) => e.value !== v);
+      let at = 0;
+      while (at < freqModel.length && freqModel[at].count >= count) at++;
+      freqModel.splice(at, 0, { value: v, count });
+      recent.add(v);
+      recentModel = [v, ...recentModel.filter((x) => x !== v)].slice(0, 20);
+    }
+    if (op % 250 === 0) {
+      assert.deepEqual(freq.toArray(), freqModel.map((e) => e.value));
+      assert.deepEqual(recent.toArray(), recentModel);
+      assert.deepEqual(dll.toArray(), dllModel);
+    }
+  }
+  assert.deepEqual(freq.toArray(), freqModel.map((e) => e.value));
+  assert.deepEqual(recent.toArray(), recentModel);
+  assert.deepEqual(dll.toArray(), dllModel);
+  assert.equal(freq.size, freqModel.length);
+  assert.equal(dll.size, dllModel.length);
+  // ligações da lista dupla íntegras depois de tantas remoções
+  const backward = [];
+  for (let node = dll.find(dllModel.at(-1)); node !== null; node = node.prev) backward.push(node.value);
+  assert.deepEqual(backward.reverse(), dllModel);
 });

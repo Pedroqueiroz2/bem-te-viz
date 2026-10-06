@@ -181,3 +181,110 @@ test("prefixo: árvore bem desbalanceada (inserção em ordem) não estoura a pi
   assert.equal(t.searchPrefix("n0000").length, 100);
   assert.equal(t.searchPrefix("n").length, 20000);
 });
+
+/* ---- remoção ---- */
+const keys = (tree) => [...tree.inOrder()].map((b) => b.species);
+const build = (list) => {
+  const t = new SplayTree();
+  for (const s of list) t.insert({ species: s, image: "", audio: "" });
+  return t;
+};
+
+test("remoção: devolve a ave removida e ela some da árvore", () => {
+  const t = build(["a", "b", "c", "d", "e"]);
+  assert.equal(t.remove("c").species, "c");
+  assert.equal(t.size, 4);
+  assert.deepEqual(keys(t), ["a", "b", "d", "e"]);
+  assert.equal(t.peek("c"), undefined);
+  assert.equal(t.search("c"), undefined);
+  assert.equal(t.depth("c"), -1);
+  assert.equal(t.getAccessCount("c"), 0);
+  assert.deepEqual(t.searchPrefix("c"), []);
+});
+
+test("remoção: espécie ausente devolve undefined e não toca em nada", () => {
+  const t = build(["a", "b", "c", "d", "e"]);
+  t.search("c"); t.search("c"); t.search("a");
+  const root = t.rootSpecies;
+  const counts = keys(t).map((k) => t.getAccessCount(k));
+  const depths = keys(t).map((k) => t.depth(k));
+  assert.equal(t.remove("zzz"), undefined);
+  assert.equal(new SplayTree().remove("a"), undefined);
+  assert.equal(t.rootSpecies, root);
+  assert.deepEqual(keys(t).map((k) => t.getAccessCount(k)), counts);
+  assert.deepEqual(keys(t).map((k) => t.depth(k)), depths, "a forma da árvore não muda");
+  assert.equal(t.size, 5);
+});
+
+test("remoção: tirar um nó que não é a raiz preserva a raiz e os contadores dos outros", () => {
+  const t = build(["a", "b", "c", "d", "e"]);
+  t.search("e"); t.search("e");          // e vira raiz com contador 3
+  t.search("a");                          // a fica abaixo da raiz (contador 2 < 3)
+  const counts = { b: t.getAccessCount("b"), c: t.getAccessCount("c"), d: t.getAccessCount("d"), e: t.getAccessCount("e") };
+  assert.equal(t.rootSpecies, "e");
+  t.remove("a");
+  assert.equal(t.rootSpecies, "e", "a raiz continua a ave mais acessada");
+  assert.deepEqual(keys(t), ["b", "c", "d", "e"]);
+  t.remove("c");                                          // um nó do meio da árvore
+  assert.equal(t.rootSpecies, "e", "continua a raiz depois de tirar um nó do meio");
+  assert.deepEqual(keys(t), ["b", "d", "e"]);
+  for (const k of ["b", "d", "e"]) assert.equal(t.getAccessCount(k), counts[k], `contador de ${k}`);
+});
+
+test("remoção: tirar a raiz promove a antecessora", () => {
+  const t = build(["a", "b", "c", "d", "e"]);
+  t.search("c"); t.search("c");           // c vira raiz
+  assert.equal(t.rootSpecies, "c");
+  t.remove("c");
+  assert.equal(t.rootSpecies, "b", "a maior chave da esquerda sobe");
+  assert.deepEqual(keys(t), ["a", "b", "d", "e"]);
+});
+
+test("remoção: tirar a raiz sem filhos à esquerda promove a raiz da subárvore direita", () => {
+  const t = build(["e", "d", "c", "b", "a"]);   // inserção decrescente: a fica na raiz, sem esquerda
+  assert.equal(t.rootSpecies, "a");
+  t.remove("a");
+  assert.equal(t.rootSpecies, "b");
+  assert.deepEqual(keys(t), ["b", "c", "d", "e"]);
+});
+
+test("remoção: tirar o único nó esvazia a árvore, e dá para inserir de novo", () => {
+  const t = build(["a"]);
+  assert.equal(t.remove("a").species, "a");
+  assert.equal(t.size, 0);
+  assert.equal(t.rootSpecies, null);
+  assert.equal(t.height(), 0);
+  t.insert({ species: "a", image: "", audio: "" });
+  assert.equal(t.size, 1);
+  assert.equal(t.getAccessCount("a"), 1, "contador volta a 1");
+});
+
+test("remoção: chaves equivalentes (maiúscula, acento) removem o mesmo nó", () => {
+  const t = build(["Sabiá", "Tucano"]);
+  assert.equal(t.remove("SABIA").species, "Sabiá");
+  assert.deepEqual(keys(t), ["Tucano"]);
+});
+
+test("remoção: tirar todas, em qualquer ordem, deixa a árvore vazia e ordenada no caminho", () => {
+  const list = Array.from({ length: 50 }, (_, i) => `k${String(i).padStart(3, "0")}`);
+  for (const order of [list, [...list].reverse(), [...list].sort((a, b) => (a.charCodeAt(2) % 7) - (b.charCodeAt(2) % 7) || a.localeCompare(b))]) {
+    const t = build(list);
+    let left = [...list];
+    for (const s of order) {
+      assert.equal(t.remove(s).species, s);
+      left = left.filter((x) => x !== s);
+      assert.deepEqual(keys(t), left);
+    }
+    assert.equal(t.size, 0);
+  }
+});
+
+test("remoção: depois dela a modificação de frequência continua valendo", () => {
+  const t = build(Array.from({ length: 40 }, (_, i) => `k${String(i).padStart(2, "0")}`));
+  for (let i = 0; i < 6; i++) t.search("k10");
+  t.remove("k20"); t.remove("k10"); t.remove("k05");
+  for (const k of ["k30", "k31", "k11", "k39", "k00"]) {
+    t.search(k);
+    assert.ok(t.depth(k) === 0 || t.depth(k) === 1, `${k} no nível ${t.depth(k)}`);
+  }
+});

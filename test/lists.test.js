@@ -78,3 +78,50 @@ test("duplamente encadeada: o primeiro não tem anterior e o último não tem pr
   assert.equal(one.find("x").prev, null);
   assert.equal(one.find("x").next, null);
 });
+
+/* ---- remoção ---- */
+test("frequência: remove do começo, do meio e do fim; ausente devolve false", () => {
+  const l = new FrequencyList();
+  l.access("a", 4); l.access("b", 3); l.access("c", 2); l.access("d", 2);
+  assert.equal(l.remove("b"), true);
+  assert.deepEqual(l.toArray(), ["a", "c", "d"]);
+  assert.equal(l.remove("a"), true);
+  assert.equal(l.remove("d"), true);
+  assert.deepEqual(l.toArray(), ["c"]);
+  assert.equal(l.remove("zz"), false);
+  assert.equal(l.remove("c"), true);
+  assert.equal(l.size, 0);
+  assert.deepEqual(l.toArray(), []);
+  l.access("x", 2);                      // continua funcionando depois de esvaziar
+  assert.deepEqual(l.toArray(), ["x"]);
+});
+
+test("recentes: remove do histórico e libera espaço", () => {
+  const l = new RecentList(3);
+  for (const v of ["a", "b", "c"]) l.add(v);
+  assert.equal(l.remove("b"), true);
+  assert.equal(l.remove("b"), false);
+  assert.deepEqual(l.toArray(), ["c", "a"]);
+  l.add("d");
+  assert.deepEqual(l.toArray(), ["d", "c", "a"]);   // não descartou ninguém: havia espaço
+});
+
+test("duplamente encadeada: remove ligando anterior e próximo", () => {
+  const l = new DoublyLinkedList();
+  for (const v of ["a", "b", "c", "d"]) l.append(v);
+  assert.equal(l.remove("b"), true);
+  assert.equal(l.find("a").next.value, "c");
+  assert.equal(l.find("c").prev.value, "a");
+  assert.equal(l.remove("a"), true);           // cabeça
+  assert.equal(l.find("c").prev, null);
+  assert.equal(l.remove("d"), true);           // cauda
+  assert.equal(l.find("c").next, null);
+  assert.equal(l.remove("zz"), false);
+  assert.deepEqual(l.toArray(), ["c"]);
+  assert.equal(l.remove("c"), true);
+  assert.equal(l.size, 0);
+  l.append("x");                               // cabeça e cauda foram refeitas
+  assert.deepEqual(l.toArray(), ["x"]);
+  assert.equal(l.find("x").prev, null);
+  assert.equal(l.find("x").next, null);
+});
