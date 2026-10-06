@@ -4,7 +4,7 @@ Catálogo multimídia do CUB-200-2011. O Node.js entrega a página HTML/CSS, uma
 
 ## Executar
 
-Requer Node.js 18 ou mais recente.
+Requer Node.js 18 ou mais recente para rodar o app e Node.js 22 ou mais recente para os testes.
 
 ```sh
 npm start
