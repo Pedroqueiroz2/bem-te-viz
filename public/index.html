@@ -1,39 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f5ef">
-  <title>Bem-te-viz | Atlas de Aves</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Bem-te-viz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/" aria-label="Bem-te-viz, início"><span class="brand-mark">B</span><span>bem-te-viz<small>atlas de aves</small></span></a>
-    <span class="dataset-tag">CUB-200-2011 <span id="catalog-source" class="source-badge" hidden></span></span>
-  </header>
+<body data-page="inicio">
+  <div id="site-header"></div>
 
-  <main id="catalog-page" class="page">
-    <section class="hero">
-      <p class="eyebrow">Um acervo para explorar</p>
-      <h1>Conheça as aves<br><em>pelo olhar e pelo canto.</em></h1>
-      <p class="hero-copy">Pesquise as 200 espécies do CUB-200-2011 e explore as imagens e gravações disponíveis na amostra multimídia.</p>
-      <label class="search-label" for="input-busca">Buscar uma espécie</label>
-      <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="input-busca" type="search" placeholder="Nome da espécie..." autocomplete="off"></div>
-      <div class="tree-status"><span aria-hidden="true">🌳</span><span><b>Splay Tree</b><span id="tree-root-display">Carregando catálogo…</span></span></div>
-      <p id="result-count" class="result-count" aria-live="polite"></p>
+  <main>
+    <section class="hero hero--home">
+      <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span><span class="blob b5"></span>
+      <div class="wrap">
+        <div>
+          <h1>Explore as <em>aves</em> do Brasil</h1>
+          <p class="lead">Descubra espécies, veja as fotos e ouça os cantos da nossa avifauna.</p>
+          <!-- Envia para especies.html?q=... (o especies.js já preenche a busca) -->
+          <form class="search" action="especies.html" method="get" role="search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+            <label for="q" style="position:absolute;left:-9999px">Buscar espécie</label>
+            <input id="q" name="q" type="search" placeholder="Busque por nome da espécie..." autocomplete="off">
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+        <div class="hero-art" id="heroArt"></div>
+        <p class="hero-tag">Nossas aves conectam o Brasil</p>
+      </div>
     </section>
-    <section class="collection">
-      <div class="section-heading"><div><p class="eyebrow">Catálogo CUB-200</p><h2>Espécies</h2></div><p>Selecione um cartão para ver as mídias disponíveis.</p></div>
-      <div id="grid-aves" class="bird-grid" aria-live="polite"></div>
-    </section>
+
+    <div class="wrap">
+      <!-- Atalhos -->
+      <section class="sec">
+        <ul class="shortcuts">
+          <li>
+            <a class="sc" href="especies.html">
+              <span class="ico" style="background:#1550e8"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="10.5" cy="14.5" rx="7" ry="4.8" transform="rotate(-12 10.5 14.5)"/><circle cx="17" cy="9" r="3.4"/><path d="M19.8 8.2L23.5 9.6 19.8 11z"/><path d="M2 14.5l-1.5 3 4-1.5z"/></svg></span>
+              <span class="sc-txt"><b>Espécies</b><small>Conheça as aves brasileiras</small></span>
+              <span class="sc-art"></span>
+              <span class="go" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="sc" href="especies.html">
+              <span class="ico" style="background:#f2a516;color:#10203f"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></svg></span>
+              <span class="sc-txt"><b>Áudios</b><small>Escute os cantos e vocalizações</small></span>
+              <span class="sc-art"></span>
+              <span class="go" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="sc" href="galerias.html">
+              <span class="ico" style="background:#0f9d58"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></span>
+              <span class="sc-txt"><b>Galerias</b><small>Explore as fotos de cada ave</small></span>
+              <span class="sc-art"></span>
+              <span class="go" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Espécies em destaque (as mais pesquisadas) -->
+      <section class="sec">
+        <div class="featured">
+          <div class="intro">
+            <h2>Espécies em destaque</h2>
+            <p>As mais pesquisadas por você. Enquanto não há visitas, mostramos as primeiras do catálogo.</p>
+            <a class="more" href="especies.html">Ver todas as espécies →</a>
+          </div>
+          <ul class="cards top4" id="destaque"></ul>
+        </div>
+      </section>
+
+      <!-- Ouça os cantos -->
+      <section class="sec">
+        <div class="listen-band">
+          <div class="txt">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></svg>
+            <h2>Ouça os cantos</h2>
+            <p>Encontre e escute as vocalizações das nossas aves.</p>
+          </div>
+          <ul class="mini-players" id="players"></ul>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <main id="detail-page" class="page detail-page" hidden>
-    <button id="btn-voltar" class="back-button" type="button">← Voltar ao catálogo</button>
-    <div id="detail-content"></div>
-  </main>
-  <footer><span>Bem-te-viz</span><span>Dados de espécies: CUB-200-2011 · uso educacional</span></footer>
-  <script type="module" src="/script.js"></script>
+  <div id="site-footer"></div>
+
+  <script type="module" src="js/pages/index.js"></script>
 </body>
 </html>
