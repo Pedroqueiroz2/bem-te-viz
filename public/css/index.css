@@ -22,7 +22,7 @@
 
 /* Espécies em destaque */
 .featured { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 24px; align-items: start; }
-.featured .cards.top4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
+.featured .cards.top4 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); }
 .featured .intro h2 { margin: 0 0 8px; }
 .featured .intro p { margin: 0 0 14px; color: var(--muted); }
 .featured .more { font-weight: 700; font-size: 14px; color: var(--link); }

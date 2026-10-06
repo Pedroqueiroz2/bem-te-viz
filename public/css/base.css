@@ -65,7 +65,7 @@ button, input { font: inherit; color: inherit; }
 
 /* Cartão de ave (foto + nome) */
 .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
-.cards.top4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.cards.top4 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
 .cards.all { grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); }
 .mini { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); min-width: 0; }
 .mini .art { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }

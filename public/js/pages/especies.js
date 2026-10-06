@@ -119,7 +119,7 @@ function openSpecies(name) {
 
   document.title = `${bird.species} · Bem-te-viz`;
   $("spName").textContent = bird.species;
-  $("spSub").textContent = `${bird.originalLabel ? `Rótulo CUB: ${bird.originalLabel} · ` : ""}${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")}`;
+  $("spSub").textContent = `${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")}`;
   const n = bird.images.length;
   $("spPhoto").innerHTML = n
     ? `<button class="photo-open" type="button" aria-label="Abrir as fotos de ${esc(bird.species)}">${birdImage(bird)}${n > 1 ? `<span class="badge">${fotos(n)}</span>` : ""}</button>`

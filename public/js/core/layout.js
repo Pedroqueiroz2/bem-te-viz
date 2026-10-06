@@ -17,7 +17,7 @@ const nav = PAGES.map(([href, label, id]) =>
 
 const header = document.getElementById("site-header");
 if (header) header.outerHTML = `<header class="top"><div class="wrap">
-  <a class="brand" href="index.html" aria-label="Bem-te-viz, início">${logo}<span>Bem-te-viz<small>Catálogo de aves</small></span></a>
+  <a class="brand" href="index.html" aria-label="Bem-te-viz, início">${logo}<span>Bem-te-viz</span></a>
   <nav class="nav" aria-label="Principal">${nav}</nav>
   <div class="top-actions">
     <a class="icon-btn" href="especies.html" aria-label="Buscar espécie">
@@ -29,7 +29,7 @@ if (header) header.outerHTML = `<header class="top"><div class="wrap">
 const footer = document.getElementById("site-footer");
 if (footer) footer.outerHTML = `<footer class="foot"><span class="blob f1"></span><span class="blob f2"></span>
   <div class="wrap">
-    <a class="brand" href="index.html"><span>Bem-te-viz<small>Catálogo de aves</small></span></a>
+    <a class="brand" href="index.html"><span>Bem-te-viz</span></a>
     <nav aria-label="Rodapé">${PAGES.map(([h, l]) => `<a href="${h}">${l}</a>`).join("")}</nav>
-    <div class="lema"><span>Ciência</span><span>Natureza</span></div>
+    <div class="lema"><span>Ciência</span><span>Natureza</span><span>Brasil</span></div>
   </div></footer>`;
