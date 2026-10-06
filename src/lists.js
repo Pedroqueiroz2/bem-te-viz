@@ -133,3 +133,56 @@ export class RecentList {
     this.#size--;
   }
 }
+
+/** Nó de lista duplamente encadeada. */
+class DoubleNode {
+  /** @param {string} value */
+  constructor(value) {
+    this.value = value;
+    /** @type {DoubleNode | null} */
+    this.prev = null;
+    /** @type {DoubleNode | null} */
+    this.next = null;
+  }
+}
+
+/**
+ * Lista duplamente encadeada, usada para navegar entre as aves em ordem
+ * alfabética ("ave anterior" / "próxima ave"). O primeiro nó não tem
+ * anterior e o último não tem próximo.
+ */
+export class DoublyLinkedList {
+  /** @type {DoubleNode | null} */
+  #head = null;
+  /** @type {DoubleNode | null} */
+  #tail = null;
+  #size = 0;
+
+  get size() {
+    return this.#size;
+  }
+
+  append(value) {
+    const node = new DoubleNode(value);
+    if (this.#tail === null) {
+      this.#head = this.#tail = node;
+    } else {
+      node.prev = this.#tail;
+      this.#tail.next = node;
+      this.#tail = node;
+    }
+    this.#size++;
+  }
+
+  /** Nó com o valor (com `prev` e `next`), ou null se não existir. */
+  find(value) {
+    for (let node = this.#head; node !== null; node = node.next) if (node.value === value) return node;
+    return null;
+  }
+
+  toArray() {
+    const out = [];
+    for (let node = this.#head; node !== null; node = node.next) out.push(node.value);
+    return out;
+  }
+}

@@ -1,5 +1,5 @@
 import { SplayTree } from "/src/splay-tree.js";
-import { TranspositionList, RecentList } from "/src/lists.js";
+import { TranspositionList, RecentList, DoublyLinkedList } from "/src/lists.js";
 import { store } from "../core/util.js";
 
 const RANKING_KEY = "bem-te-viz-ranking";
@@ -12,6 +12,9 @@ export const ranking = new TranspositionList();
 /** Linear: histórico "vistas recentemente" (lista com limite). */
 export const recent = new RecentList(12);
 
+/** Linear: todas as aves em ordem alfabética, para ir à ave anterior / próxima. */
+export const browse = new DoublyLinkedList();
+
 export const meta = { source: "", stats: null };
 
 async function load() {
@@ -19,6 +22,7 @@ async function load() {
   if (!response.ok) throw new Error(`Falha ao carregar o catálogo (${response.status})`);
   const data = await response.json();
   for (const bird of data.birds) tree.insert(bird);
+  for (const bird of tree.inOrder()) browse.append(bird.species);
   meta.source = data.source;
   meta.stats = data.stats;
 
@@ -53,6 +57,15 @@ export function openBird(name) {
   store.set(RANKING_KEY, ranking.toArray());
   store.set(RECENT_KEY, recent.toArray());
   return bird;
+}
+
+/** Ave anterior e próxima (null no começo e no fim da lista), sem reorganizar a árvore. */
+export function neighbors(name) {
+  const node = browse.find(name);
+  return {
+    prev: node?.prev ? tree.peek(node.prev.value) : null,
+    next: node?.next ? tree.peek(node.next.value) : null,
+  };
 }
 
 /** As `n` aves mais pesquisadas, sem reorganizar a árvore. */
