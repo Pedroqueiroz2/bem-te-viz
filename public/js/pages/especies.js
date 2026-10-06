@@ -1,7 +1,7 @@
 import "../core/layout.js";
 import { $, norm, fmt, rng, esc, fotos, plural } from "../core/util.js";
 import {
-  ready, meta, allBirds, openBird, topBirds, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
+  ready, meta, allBirds, openBird, accessCount, neighbors, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
 } from "../data/catalog.js";
 import { miniCard, birdImage } from "../components/cards.js";
 import { playAudio, audioDuration } from "../components/audio.js";
@@ -27,9 +27,9 @@ function renderAll() {
   $("empty").hidden = !!list.length;
   const n = list.length;
   $("count").innerHTML = `<strong>${n}</strong> ${n === 1 ? "espécie" : "espécies"}${term ? ` para “${esc($("q").value.trim())}”` : ""}`;
-  const top = topBirds(4);
-  $("top4").innerHTML = top.map((bird, i) => card(bird, i + 1)).join("");
-  $("secTop").hidden = !!term || !top.length;
+  const seen = recentBirds();
+  $("recentList").innerHTML = seen.map((bird) => card(bird)).join("");
+  $("secRecent").hidden = !!term || !seen.length;
 }
 $("q").addEventListener("input", renderAll);
 $("form").addEventListener("submit", (e) => { e.preventDefault(); renderAll(); $("secAll").scrollIntoView({ behavior: "smooth" }); });
@@ -140,7 +140,15 @@ function openSpecies(name) {
 
   document.title = `${bird.species} · Bem-te-viz`;
   $("spName").textContent = bird.species;
-  $("spSub").textContent = `${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")}`;
+  $("spSub").textContent = `${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")} · contador ${accessCount(bird.species)}`;
+  const around = neighbors(bird.species);
+  for (const [id, target] of [["prevBird", around.prev], ["nextBird", around.next]]) {
+    const link = $(id);
+    link.style.visibility = target ? "visible" : "hidden";   // some no começo e no fim da lista
+    link.querySelector("b").textContent = target ? target.species : "";
+    if (target) link.href = `#/especie/${encodeURIComponent(target.species)}`;
+  }
+
   const n = bird.images.length;
   $("spPhoto").innerHTML = n
     ? `<button class="photo-open" type="button" aria-label="Abrir as fotos de ${esc(bird.species)}">${birdImage(bird)}${n > 1 ? `<span class="badge">${fotos(n)}</span>` : ""}</button>`
@@ -175,6 +183,7 @@ function openSpecies(name) {
   $("secHist").hidden = !others.length;
   $("hist").innerHTML = others.map((b) => card(b)).join("");
 }
+$("clearRecent").addEventListener("click", () => { clearRecent(); renderAll(); });
 $("clearHist").addEventListener("click", () => { clearRecent(); renderHist(current?.species); });
 
 /* ---- Navegação: #/ (lista) e #/especie/<nome> ---- */

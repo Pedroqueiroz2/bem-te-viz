@@ -7,6 +7,9 @@ import { playAudio } from "../components/audio.js";
 const PLAY = '<svg class="i-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>'
   + '<svg class="i-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>';
 
+/** Foto da capa da inicial. Se ela não estiver no catálogo (ex.: amostra local), usa a primeira ave com foto. */
+const HERO_IMAGE = "media/images/182_3_Yellow_Warbler_0007_176616.jpg";
+
 const thumb = (bird, i = 0) => (bird?.images[i]
   ? `<img src="${mediaUrl(bird.images[i])}" alt="${esc(bird.species)}">`
   : placeholder(""));
@@ -23,16 +26,23 @@ function pick(n, test) {
 }
 
 ready.then(() => {
-  const withImage = pick(4, (b) => b.images.length);
+  const withImage = pick(10, (b) => b.images.length);
 
   // ilustração do topo e miniaturas dos atalhos usam fotos reais do catálogo
-  $("heroArt").innerHTML = withImage[0] ? thumb(withImage[0]) : placeholder("Sem fotos nesta amostra");
+  const heroBird = pick(1, (b) => b.images.includes(HERO_IMAGE))[0];
+  $("heroArt").classList.toggle("hero-zoom", !!heroBird);   // só a foto escolhida leva zoom
+  $("heroArt").innerHTML = heroBird
+    ? `<img src="${mediaUrl(HERO_IMAGE)}" alt="${esc(heroBird.species)}">`
+    : withImage[0] ? thumb(withImage[0]) : placeholder("Sem fotos nesta amostra");
   document.querySelectorAll(".sc-art").forEach((el, i) => { el.innerHTML = thumb(withImage[i + 1] ?? withImage[0]); });
 
   // destaque: as mais pesquisadas; enquanto não há visitas, as primeiras com foto
-  const top = topBirds(4);
+  const top = topBirds(10);
   const destaque = top.length ? top : withImage;
+  // a frase "enquanto você não abre nenhuma..." só faz sentido enquanto o ranking está vazio
+  if (top.length) $("destaqueTxt").textContent = "As aves mais pesquisadas por você, da mais para a menos acessada.";
   $("destaque").innerHTML = destaque.map((bird, i) => miniCard(bird, { href: speciesHref(bird), rank: top.length ? i + 1 : undefined })).join("");
+  setupRail();
 
   // mini players: aves que têm gravação
   const singers = pick(4, (b) => b.audios.length);
@@ -69,3 +79,21 @@ ready.then(() => {
 }).catch((error) => {
   $("destaque").innerHTML = `<li>Não foi possível carregar o catálogo: ${esc(error.message)}</li>`;
 });
+
+/** Setas do carrossel de destaque: rolam a faixa e somem nas pontas. */
+function setupRail() {
+  const track = $("destaque");
+  const prev = $("railPrev");
+  const next = $("railNext");
+  const sync = () => {
+    prev.disabled = track.scrollLeft <= 4;
+    next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  };
+  const step = () => Math.max(200, track.clientWidth * 0.8);
+  const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  prev.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: smooth }));
+  next.addEventListener("click", () => track.scrollBy({ left: step(), behavior: smooth }));
+  track.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("resize", sync);
+  sync();
+}

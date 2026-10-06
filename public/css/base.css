@@ -1,6 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; }
 img { max-width: 100%; }
+[hidden] { display: none !important; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
@@ -87,6 +88,10 @@ button, input { font: inherit; color: inherit; }
   background: linear-gradient(160deg, color-mix(in srgb, var(--blue) 14%, var(--card)), color-mix(in srgb, var(--blue) 4%, var(--card))); }
 .ph svg { opacity: .55; }
 
+/* Histórico (vistas recentemente) */
+.hist { display: grid; grid-auto-flow: column; grid-auto-columns: 200px; gap: 16px; overflow-x: auto; padding: 4px 0 14px; scroll-snap-type: x proximity; list-style: none; margin: 0; }
+.hist > li { scroll-snap-align: start; }
+
 /* Filtros */
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 14px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 380px; min-width: 0; }
@@ -111,3 +116,6 @@ button, input { font: inherit; color: inherit; }
 .foot .lema span:last-child { color: var(--yellow); }
 .f1 { width: 90px; height: 90px; background: var(--yellow); left: -34px; bottom: -44px; }
 .f2 { width: 70px; height: 70px; background: var(--green); right: -26px; bottom: -30px; }
+
+/* Contador de acessos da ave (no cartão dela) */
+.cnt { position: absolute; right: 10px; bottom: 10px; z-index: 1; min-width: 26px; text-align: center; padding: 3px 9px; border-radius: 999px; background: rgba(16,32,63,.78); color: #fff; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }

@@ -1,6 +1,6 @@
 import "../core/layout.js";
 import { $, norm, esc, fotos } from "../core/util.js";
-import { ready, allBirds, openBird, topBirds, mediaUrl, galleryHref } from "../data/catalog.js";
+import { ready, allBirds, openBird, accessCount, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
 import { miniCard } from "../components/cards.js";
 
 
@@ -19,10 +19,11 @@ function renderAll() {
   $("empty").hidden = !!list.length;
   const n = list.length;
   $("count").innerHTML = `<strong>${n}</strong> ${n === 1 ? "galeria" : "galerias"}${term ? ` para “${esc($("q").value.trim())}”` : ""}`;
-  const top = topBirds(4);
-  $("top4").innerHTML = top.map((bird, i) => card(bird, i + 1)).join("");
-  $("secTop").hidden = !!term || !top.length;
+  const seen = recentBirds();
+  $("recentList").innerHTML = seen.map((bird) => card(bird)).join("");
+  $("secRecent").hidden = !!term || !seen.length;
 }
+$("clearRecent").addEventListener("click", () => { clearRecent(); renderAll(); });
 $("q").addEventListener("input", renderAll);
 $("form").addEventListener("submit", (e) => { e.preventDefault(); renderAll(); $("secAll").scrollIntoView({ behavior: "smooth" }); });
 
@@ -33,7 +34,7 @@ function openGallery(name) {
   const n = bird.images.length;
   document.title = `${bird.species} · Galeria · Bem-te-viz`;
   $("gName").textContent = bird.species;
-  $("gSub").textContent = n ? fotos(n) : "Sem fotos nesta amostra";
+  $("gSub").textContent = `${n ? fotos(n) : "Sem fotos nesta amostra"} · contador ${accessCount(bird.species)}`;
   $("photoGrid").innerHTML = bird.images.map((path, k) =>
     `<li><a href="${mediaUrl(path)}" target="_blank" rel="noopener" aria-label="Abrir a foto ${k + 1} em tamanho original"><img src="${mediaUrl(path)}" alt="${esc(bird.species)}, foto ${k + 1}" loading="lazy"></a></li>`).join("");
   $("gEmpty").hidden = n > 0;
