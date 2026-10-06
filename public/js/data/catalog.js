@@ -1,5 +1,5 @@
 import { SplayTree } from "/src/splay-tree.js";
-import { TranspositionList, RecentList, DoublyLinkedList } from "/src/lists.js";
+import { FrequencyList, RecentList, DoublyLinkedList } from "/src/lists.js";
 import { store } from "../core/util.js";
 
 const STATE_KEY = "bem-te-viz-state";
@@ -19,15 +19,15 @@ const saveState = () => store.set(STATE_KEY, state);
 function applyAccess(name, toRecent) {
   const bird = tree.search(name);
   if (!bird) return undefined;
-  ranking.access(bird.species);
+  ranking.access(bird.species, tree.getAccessCount(bird.species));   // contador já atualizado pela árvore
   if (toRecent) recent.add(bird.species);
   return bird;
 }
 
 /** Hierárquica: guarda todas as aves, chaveadas pelo nome da espécie. */
 export const tree = new SplayTree();
-/** Linear: ranking "mais pesquisadas" (lista com transposição). */
-export const ranking = new TranspositionList();
+/** Linear: ranking "mais pesquisadas" (lista ordenada pelo contador de acessos). */
+export const ranking = new FrequencyList();
 /** Linear: histórico "vistas recentemente" (lista com limite). */
 export const recent = new RecentList(12);
 

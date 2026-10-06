@@ -1,28 +1,40 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TranspositionList, RecentList, DoublyLinkedList } from "../src/lists.js";
+import { FrequencyList, RecentList, DoublyLinkedList } from "../src/lists.js";
 
-test("transposição: valor novo entra no fim", () => {
-  const l = new TranspositionList();
-  for (const v of ["a", "b", "c"]) l.access(v);
+test("frequência: valor novo entra pelo contador, em empate fica atrás", () => {
+  const l = new FrequencyList();
+  l.access("a", 2);
+  l.access("b", 2);
+  l.access("c", 2);
   assert.deepEqual(l.toArray(), ["a", "b", "c"]);
   assert.equal(l.size, 3);
 });
 
-test("transposição: cada acesso sobe uma posição", () => {
-  const l = new TranspositionList();
-  for (const v of ["a", "b", "c"]) l.access(v);
-  l.access("c");
-  assert.deepEqual(l.toArray(), ["a", "c", "b"]);
-  l.access("c");
+test("frequência: o maior contador fica sempre na frente", () => {
+  const l = new FrequencyList();
+  for (const v of ["a", "b", "c"]) l.access(v, 2);
+  l.access("c", 3);
   assert.deepEqual(l.toArray(), ["c", "a", "b"]);
-  l.access("c");
-  assert.deepEqual(l.toArray(), ["c", "a", "b"]);
+  l.access("b", 3);
+  assert.deepEqual(l.toArray(), ["c", "b", "a"]);   // empata com c, fica atrás dele
+  l.access("a", 4);
+  assert.deepEqual(l.toArray(), ["a", "c", "b"]);   // pula mais de uma posição
 });
 
-test("transposição: take devolve os primeiros n", () => {
-  const l = new TranspositionList();
-  for (const v of ["a", "b", "c", "d"]) l.access(v);
+test("frequência: sempre em ordem decrescente de contador", () => {
+  const l = new FrequencyList();
+  const counts = new Map();
+  const bump = (v) => { counts.set(v, (counts.get(v) ?? 1) + 1); l.access(v, counts.get(v)); };
+  for (const v of ["x", "y", "x", "z", "y", "y", "w", "z", "z", "z", "x"]) bump(v);
+  const order = l.toArray().map((v) => counts.get(v));
+  assert.deepEqual(order, [...order].sort((p, q) => q - p));
+  assert.equal(l.size, 4);
+});
+
+test("frequência: take devolve os primeiros n", () => {
+  const l = new FrequencyList();
+  for (const v of ["a", "b", "c", "d"]) l.access(v, 2);
   assert.deepEqual(l.take(2), ["a", "b"]);
   assert.deepEqual(l.take(10), ["a", "b", "c", "d"]);
 });
