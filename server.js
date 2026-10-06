@@ -9,6 +9,8 @@ const PORT = Number(process.env.PORT || 3000);
 const processedDirectory = process.env.BIRD_CATALOG_DIR
   ? path.resolve(process.env.BIRD_CATALOG_DIR)
   : path.join(ROOT, "data", "processed", "bem-te-viz-package");
+// Muda a cada início do servidor: o navegador usa para zerar contador, ranking e histórico.
+const SESSION_ID = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const loaded = loadCatalog({ processedDirectory, demoDirectory: path.join(ROOT, "data", "demo") });
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -34,6 +36,7 @@ const server = http.createServer((req, res) => {
     const payload = {
       schemaVersion: loaded.catalog.schemaVersion,
       birds: loaded.catalog.birds,
+      session: SESSION_ID,
       source: loaded.source,
       stats: loaded.stats,
       fallbackReason: loaded.fallbackReason ?? null,
