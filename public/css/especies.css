@@ -22,6 +22,14 @@
 .demo { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; background: var(--card); width: fit-content; }
 @media (max-width: 520px) { .listen { padding: 18px; } .bigplayer { gap: 10px; padding-right: 14px; } .bigplay { width: 52px; height: 52px; } }
 
+/* Várias gravações: lista rolável, o card mantém o tamanho */
+.tracks { display: flex; flex-direction: column; gap: 6px; flex: 1 1 0; min-height: 58px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: var(--muted) var(--line); }
+.track { flex: none; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 7px 12px 7px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--muted); font-weight: 600; font-size: 14px; cursor: pointer; }
+.track:hover { color: var(--fg); border-color: var(--muted); }
+.track[aria-current="true"] { background: var(--blue); border-color: var(--blue); color: var(--blue-ink); }
+.track-n { width: 24px; height: 24px; flex: none; border-radius: 50%; background: var(--chip); color: var(--fg); display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.track[aria-current="true"] .track-n { background: rgba(255,255,255,.25); color: #fff; }
+
 /* Histórico (vistas recentemente) */
 .hist { display: grid; grid-auto-flow: column; grid-auto-columns: 200px; gap: 16px; overflow-x: auto; padding: 4px 0 14px; scroll-snap-type: x proximity; list-style: none; margin: 0; }
 .hist > li { scroll-snap-align: start; }

@@ -10,6 +10,7 @@ const BARS = 56;
 let stopFn = null;
 let current = null;
 let idx = 0;
+let track = 0;   // gravação selecionada da ave aberta
 
 const card = (bird, rank) => miniCard(bird, { href: speciesHref(bird), rank });
 
@@ -48,9 +49,29 @@ function resetAudio() {
 $("bigplay").addEventListener("click", () => {
   if (stopFn) { resetAudio(); return; }
   if (!current?.audios.length) return;
-  stopFn = playAudio(mediaUrl(current.audios[0]), { onProgress: setProgress, onEnd: resetAudio });
+  startTrack();
+});
+
+function startTrack() {
+  stopFn = playAudio(mediaUrl(current.audios[track]), { onProgress: setProgress, onEnd: resetAudio });
   $("spListen").classList.add("is-playing");
   $("bigplay").setAttribute("aria-pressed", "true");
+}
+
+/* Várias gravações: lista rolável dentro do mesmo card, clicar escolhe e toca */
+function renderTracks() {
+  const n = current.audios.length;
+  $("spTracks").hidden = n < 2;
+  $("spTracks").innerHTML = n < 2 ? "" : current.audios.map((_, k) =>
+    `<button class="track" type="button" role="listitem" data-k="${k}" aria-current="${k === track}"><span class="track-n">${k + 1}</span>Gravação ${k + 1}</button>`).join("");
+}
+$("spTracks").addEventListener("click", (e) => {
+  const t = e.target.closest(".track");
+  if (!t || !current) return;
+  resetAudio();
+  track = +t.dataset.k;
+  $("spTracks").querySelectorAll(".track").forEach((x) => x.setAttribute("aria-current", String(x === t)));  // sem redesenhar: mantém a rolagem
+  startTrack();
 });
 
 /* ---- Carrossel de fotos (janela aberta pela foto ou pelas miniaturas) ---- */
@@ -137,13 +158,15 @@ function openSpecies(name) {
     return `<b style="height:${Math.round(prev * 100)}%"></b>`;
   }).join("");
 
+  track = 0;
+  renderTracks();
   const hasAudio = bird.audios.length > 0;
   $("bigplay").disabled = !hasAudio;
   $("bigplay").setAttribute("aria-label", hasAudio ? `Ouvir o canto: ${bird.species}` : "Sem gravação disponível");
   $("spNote").hidden = hasAudio;
   $("spTime").textContent = "0:00";
   if (hasAudio) {
-    audioDuration(mediaUrl(bird.audios[0])).then((d) => {
+    audioDuration(mediaUrl(bird.audios[track])).then((d) => {
       if (current === bird && !stopFn && Number.isFinite(d) && d > 0) $("spTime").textContent = `0:00 / ${fmt(d)}`;
     });
   }
