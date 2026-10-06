@@ -1,0 +1,46 @@
+/* Página inicial */
+.hero--home .wrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px 40px; align-items: center; padding-block: 52px 56px; }
+.hero--home .lead { margin: 0 0 22px; max-width: 50ch; font-size: 1.1rem; color: rgba(255,255,255,.92); }
+.hero-art { position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4 / 3; box-shadow: 0 18px 40px rgba(0,0,0,.28); border: 4px solid rgba(255,255,255,.85); background: var(--canopy-a); }
+.hero-art img, .hero-art .ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-tag { grid-column: 1 / -1; margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--yellow); }
+@media (max-width: 820px) { .hero--home .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 36px 40px; } .hero-art { max-width: 420px; } }
+
+/* Atalhos */
+.shortcuts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+.ico { width: 52px; height: 52px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+.sc { position: relative; display: flex; align-items: center; gap: 14px; height: 100%; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.sc-txt { display: flex; flex-direction: column; min-width: 0; margin-right: auto; }
+.sc-txt b { font-family: var(--display); font-weight: 800; font-size: 1.1rem; }
+.sc-txt small { color: var(--muted); font-size: 13px; }
+.sc-art { width: 76px; height: 56px; flex: none; border-radius: 12px; overflow: hidden; background: var(--chip); }
+.sc-art img, .sc-art .ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sc-art .ph svg { width: 28px; height: 28px; }
+.sc-art .ph { font-size: 0; padding: 0; }
+.go { width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--blue); color: var(--blue-ink); display: grid; place-items: center; }
+@media (prefers-reduced-motion: no-preference) { .sc { transition: transform .18s ease; } .sc:hover { transform: translateY(-3px); } }
+
+/* Espécies em destaque */
+.featured { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.featured .cards.top4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
+.featured .intro h2 { margin: 0 0 8px; }
+.featured .intro p { margin: 0 0 14px; color: var(--muted); }
+.featured .more { font-weight: 700; font-size: 14px; color: var(--link); }
+@media (max-width: 860px) { .featured { grid-template-columns: minmax(0, 1fr); } }
+
+/* Ouça os cantos */
+.listen-band { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 24px; align-items: center; padding: 26px; border-radius: 22px; background: var(--navy); color: var(--navy-ink); }
+.listen-band .txt svg { color: var(--yellow); }
+.listen-band h2 { margin: 8px 0 6px; color: #fff; }
+.listen-band p { margin: 0; color: rgba(255,255,255,.8); }
+.mini-players { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.mp { display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }
+.mp-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 0; background: var(--yellow); color: #10203f; display: grid; place-items: center; cursor: pointer; }
+.mp-btn .i-pause { display: none; }
+.mp.is-playing .mp-btn .i-play { display: none; }
+.mp.is-playing .mp-btn .i-pause { display: block; }
+.mp-name { flex: 1; min-width: 0; font-weight: 700; font-size: 14px; line-height: 1.25; overflow-wrap: anywhere; }
+.mp-name:hover { text-decoration: underline; }
+.mp-time { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: rgba(255,255,255,.75); }
+.mp-empty { color: rgba(255,255,255,.75); margin: 0; }
+@media (max-width: 860px) { .listen-band { grid-template-columns: minmax(0, 1fr); } }
