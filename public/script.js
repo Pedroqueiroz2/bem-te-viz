@@ -1,5 +1,6 @@
 import { SplayTree } from "../src/splay-tree.js";
 import { birdKey } from "../src/bird.js";
+import { stopAudioElements } from "../src/audio-playback.js";
 
 const grid = document.querySelector("#grid-aves");
 const input = document.querySelector("#input-busca");
@@ -76,6 +77,7 @@ function renderCards(items) {
 }
 
 function showDetails(bird) {
+  stopAudioElements(detailContent);
   catalogPage.hidden = true;
   detailPage.hidden = false;
   detailContent.replaceChildren();
@@ -185,10 +187,14 @@ function refreshSearch() {
 }
 
 document.querySelector("#btn-voltar").addEventListener("click", () => {
+  stopAudioElements(detailContent);
   detailPage.hidden = true;
   catalogPage.hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+window.addEventListener("pagehide", () => stopAudioElements(detailContent));
+
 input.addEventListener("input", refreshSearch);
 
 try {
