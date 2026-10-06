@@ -37,7 +37,6 @@
         </section>
         <section class="sec" id="secAll">
           <div class="sec-head"><h2>Todas as galerias</h2></div>
-          <div class="toolbar"><div class="chips" id="chips" role="group"></div></div>
           <p class="count" id="count" aria-live="polite">Carregando catálogo…</p>
           <ul class="cards all" id="all"></ul>
           <div class="empty" id="empty" hidden><h3>Nenhuma galeria encontrada</h3><p>Confira a grafia ou tente outro nome.</p></div>
@@ -57,16 +56,8 @@
       </section>
       <div class="wrap">
         <section class="sec">
-          <div class="carousel" id="carousel" aria-roledescription="carrossel" aria-label="Fotos da espécie">
-            <div class="car-stage" id="carStage" aria-live="polite"></div>
-            <button class="nav-btn prev" id="prev" type="button" aria-label="Foto anterior"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-            <button class="nav-btn next" id="next" type="button" aria-label="Próxima foto"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
-            <div class="car-counter" id="counter"></div>
-          </div>
-          <div class="strip-wrap">
-            <div class="strip-head"><strong>Todas as fotos</strong><span id="stripHint"></span></div>
-            <div class="strip" id="strip" role="list"></div>
-          </div>
+          <ul class="photo-grid" id="photoGrid"></ul>
+          <div class="empty" id="gEmpty" hidden><h3>Sem fotos nesta amostra</h3><p>Esta espécie ainda não tem fotos no catálogo local.</p></div>
         </section>
       </div>
     </div>
