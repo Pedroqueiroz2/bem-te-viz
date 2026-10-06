@@ -5,6 +5,7 @@ import {
 } from "../data/catalog.js";
 import { miniCard, birdImage } from "../components/cards.js";
 import { playAudio, audioDuration } from "../components/audio.js";
+import { mountTreeBadge, updateTreeBadge } from "../components/tree-badge.js";
 
 const BARS = 56;
 let stopFn = null;
@@ -137,6 +138,7 @@ function openSpecies(name) {
   const bird = openBird(name);            // busca na árvore (afunila) e registra nas listas
   if (!bird) { location.hash = "#/"; return; }
   current = bird;
+  updateTreeBadge(bird.species);
 
   document.title = `${bird.species} · Bem-te-viz`;
   $("spName").textContent = bird.species;
@@ -198,12 +200,14 @@ function route() {
     resetAudio();
     current = null;
     document.title = "Espécies · Bem-te-viz";
+    updateTreeBadge();
     renderAll();
   }
   window.scrollTo(0, 0);
 }
 
 ready.then(() => {
+  mountTreeBadge();
   const q = new URLSearchParams(location.search).get("q");
   if (q) $("q").value = q;
   window.addEventListener("hashchange", route);

@@ -2,6 +2,7 @@ import "../core/layout.js";
 import { $, norm, esc, fotos } from "../core/util.js";
 import { ready, allBirds, openBird, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
 import { miniCard } from "../components/cards.js";
+import { mountTreeBadge, updateTreeBadge } from "../components/tree-badge.js";
 
 
 const card = (bird, rank) => miniCard(bird, { href: galleryHref(bird), rank, badge: fotos(bird.images.length) });
@@ -31,6 +32,7 @@ $("form").addEventListener("submit", (e) => { e.preventDefault(); renderAll(); $
 function openGallery(name) {
   const bird = openBird(name);   // busca na árvore (afunila) e conta como acesso
   if (!bird) { location.hash = "#/"; return; }
+  updateTreeBadge(bird.species);
   const n = bird.images.length;
   document.title = `${bird.species} · Galeria · Bem-te-viz`;
   $("gName").textContent = bird.species;
@@ -49,12 +51,14 @@ function route() {
     openGallery(decodeURIComponent(m[1]));
   } else {
     document.title = "Galerias · Bem-te-viz";
+    updateTreeBadge();
     renderAll();
   }
   window.scrollTo(0, 0);
 }
 
 ready.then(() => {
+  mountTreeBadge();
   window.addEventListener("hashchange", route);
   route();
 }).catch((error) => {

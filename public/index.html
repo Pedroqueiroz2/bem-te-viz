@@ -73,7 +73,11 @@
             <p id="destaqueTxt">As aves mais pesquisadas por você ficam aqui, da mais para a menos acessada. Enquanto você não abre nenhuma, mostramos algumas para começar.</p>
             <a class="more" href="especies.html">Ver todas as espécies →</a>
           </div>
-          <ul class="cards top4" id="destaque"></ul>
+          <div class="rail">
+            <button class="rail-btn prev" id="railPrev" type="button" aria-label="Aves anteriores"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <ul class="rail-track" id="destaque" aria-label="As 10 aves mais acessadas"></ul>
+            <button class="rail-btn next" id="railNext" type="button" aria-label="Próximas aves"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+          </div>
         </div>
       </section>
 

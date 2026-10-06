@@ -1,6 +1,7 @@
 import "../core/layout.js";
 import { $, esc, fmt, placeholder } from "../core/util.js";
 import { ready, allBirds, topBirds, mediaUrl, speciesHref } from "../data/catalog.js";
+import { mountTreeBadge } from "../components/tree-badge.js";
 import { miniCard } from "../components/cards.js";
 import { playAudio } from "../components/audio.js";
 
@@ -23,18 +24,20 @@ function pick(n, test) {
 }
 
 ready.then(() => {
-  const withImage = pick(4, (b) => b.images.length);
+  mountTreeBadge();
+  const withImage = pick(10, (b) => b.images.length);
 
   // ilustração do topo e miniaturas dos atalhos usam fotos reais do catálogo
   $("heroArt").innerHTML = withImage[0] ? thumb(withImage[0]) : placeholder("Sem fotos nesta amostra");
   document.querySelectorAll(".sc-art").forEach((el, i) => { el.innerHTML = thumb(withImage[i + 1] ?? withImage[0]); });
 
   // destaque: as mais pesquisadas; enquanto não há visitas, as primeiras com foto
-  const top = topBirds(4);
+  const top = topBirds(10);
   const destaque = top.length ? top : withImage;
   // a frase "enquanto você não abre nenhuma..." só faz sentido enquanto o ranking está vazio
   if (top.length) $("destaqueTxt").textContent = "As aves mais pesquisadas por você, da mais para a menos acessada.";
   $("destaque").innerHTML = destaque.map((bird, i) => miniCard(bird, { href: speciesHref(bird), rank: top.length ? i + 1 : undefined })).join("");
+  setupRail();
 
   // mini players: aves que têm gravação
   const singers = pick(4, (b) => b.audios.length);
@@ -71,3 +74,21 @@ ready.then(() => {
 }).catch((error) => {
   $("destaque").innerHTML = `<li>Não foi possível carregar o catálogo: ${esc(error.message)}</li>`;
 });
+
+/** Setas do carrossel de destaque: rolam a faixa e somem nas pontas. */
+function setupRail() {
+  const track = $("destaque");
+  const prev = $("railPrev");
+  const next = $("railNext");
+  const sync = () => {
+    prev.disabled = track.scrollLeft <= 4;
+    next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  };
+  const step = () => Math.max(200, track.clientWidth * 0.8);
+  const smooth = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  prev.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: smooth }));
+  next.addEventListener("click", () => track.scrollBy({ left: step(), behavior: smooth }));
+  track.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("resize", sync);
+  sync();
+}
