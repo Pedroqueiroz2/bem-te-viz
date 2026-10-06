@@ -2,52 +2,76 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadCatalog } from "./src/catalog-loader.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT || 3000;
-
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const PORT = Number(process.env.PORT || 3000);
+const processedDirectory = process.env.BIRD_CATALOG_DIR
+  ? path.resolve(process.env.BIRD_CATALOG_DIR)
+  : path.join(ROOT, "data", "processed", "bem-te-viz-package");
+const loaded = loadCatalog({ processedDirectory, demoDirectory: path.join(ROOT, "data", "demo") });
 const MIME_TYPES = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".svg": "image/svg+xml",
-  ".mp3": "audio/mpeg",
-  ".ogg": "audio/ogg",
-  ".ico": "image/x-icon",
+  ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
+  ".js": "application/javascript; charset=utf-8", ".json": "application/json; charset=utf-8",
+  ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp",
+  ".svg": "image/svg+xml", ".mp3": "audio/mpeg", ".ogg": "audio/ogg", ".wav": "audio/wav",
+  ".m4a": "audio/mp4", ".flac": "audio/flac", ".ico": "image/x-icon",
 };
 
+function sendFile(res, filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  res.writeHead(200, { "Content-Type": MIME_TYPES[ext] || "application/octet-stream", "X-Content-Type-Options": "nosniff" });
+  fs.createReadStream(filePath).pipe(res);
+}
+
 const server = http.createServer((req, res) => {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-  let pathname = decodeURIComponent(parsedUrl.pathname);
+  let pathname;
+  try { pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host}`).pathname); }
+  catch { res.writeHead(400).end("URL inválida"); return; }
 
-  if (pathname === "/") {
-    pathname = "/public/index.html";
+  if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405).end("Método não permitido"); return; }
+  if (pathname === "/api/catalog") {
+    const payload = {
+      schemaVersion: loaded.catalog.schemaVersion,
+      birds: loaded.catalog.birds,
+      source: loaded.source,
+      stats: loaded.stats,
+      fallbackReason: loaded.fallbackReason ?? null,
+    };
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+    res.end(JSON.stringify(payload));
+    return;
   }
 
-  // Permite servir arquivos de /public e de /src
-  let filePath = path.join(__dirname, pathname);
-  if (!fs.existsSync(filePath) && fs.existsSync(path.join(__dirname, "public", pathname))) {
-    filePath = path.join(__dirname, "public", pathname);
+  if (pathname.startsWith("/media/")) {
+    const relativePath = pathname.slice("/media/".length);
+    if (!relativePath || relativePath.split("/").includes("..")) { res.writeHead(400).end("Caminho inválido"); return; }
+    const filePath = path.resolve(loaded.directory, "media", relativePath);
+    const mediaRoot = path.resolve(loaded.directory, "media") + path.sep;
+    if (!filePath.startsWith(mediaRoot)) { res.writeHead(403).end("Acesso negado"); return; }
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) { res.writeHead(404).end("Mídia não encontrada"); return; }
+    sendFile(res, filePath);
+    return;
   }
 
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || "application/octet-stream";
-    res.writeHead(200, { "Content-Type": contentType });
-    fs.createReadStream(filePath).pipe(res);
-  } else {
-    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("404 - Arquivo não encontrado");
+  const sourceRequest = pathname.startsWith("/src/");
+  const requested = sourceRequest
+    ? pathname.slice("/src/".length)
+    : pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+  const staticRoot = path.resolve(ROOT, sourceRequest ? "src" : "public");
+  const filePath = path.resolve(staticRoot, requested);
+
+  if (!filePath.startsWith(staticRoot + path.sep) ||
+      !fs.existsSync(filePath) ||
+      !fs.statSync(filePath).isFile()) {
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" })
+      .end("404 - Arquivo não encontrado");
+    return;
   }
+  sendFile(res, filePath);
 });
 
-server.listen(PORT, () => {
-  console.log(`\n======================================================`);
-  console.log(`  Catálogo de Aves (Bem-te-viz) iniciado com sucesso!`);
-  console.log(`  Acesse no navegador: http://localhost:${PORT}`);
-  console.log(`======================================================\n`);
+server.listen(PORT, "127.0.0.1", () => {
+  console.log(`Bem-te-viz em http://localhost:${PORT} | catálogo: ${loaded.source} (${loaded.stats.species} espécies, ${loaded.stats.images} imagens, ${loaded.stats.audios} áudios)`);
+  if (loaded.fallbackReason) console.log(`Pacote processado indisponível; usando demonstração local. Motivo: ${loaded.fallbackReason}`);
 });

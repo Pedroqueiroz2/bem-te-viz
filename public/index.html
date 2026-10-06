@@ -1,99 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Interativo de Aves</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <title>Bem-te-viz | Atlas de Aves</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Bem-te-viz, início"><span class="brand-mark">B</span><span>bem-te-viz<small>atlas de aves</small></span></a>
+    <span class="dataset-tag">CUB-200-2011 <span id="catalog-source" class="source-badge" hidden></span></span>
+  </header>
 
-    <!-- TELA 1: HOME / CATÁLOGO -->
-    <div id="tela-home" class="pagina">
-        <header class="catalog-header">
-            <div></div>
-            <div style="color: #557765; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;">
-                CUB-200 DATASET
-            </div>
-        </header>
+  <main id="catalog-page" class="page">
+    <section class="hero">
+      <p class="eyebrow">Um acervo para explorar</p>
+      <h1>Conheça as aves<br><em>pelo olhar e pelo canto.</em></h1>
+      <p class="hero-copy">Pesquise as 200 espécies do CUB-200-2011 e explore as imagens e gravações disponíveis na amostra multimídia.</p>
+      <label class="search-label" for="input-busca">Buscar uma espécie</label>
+      <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="input-busca" type="search" placeholder="Nome da espécie..." autocomplete="off"></div>
+      <div class="tree-status"><span aria-hidden="true">🌳</span><span><b>Splay Tree</b><span id="tree-root-display">Carregando catálogo…</span></span></div>
+      <p id="result-count" class="result-count" aria-live="polite"></p>
+    </section>
+    <section class="collection">
+      <div class="section-heading"><div><p class="eyebrow">Catálogo CUB-200</p><h2>Espécies</h2></div><p>Selecione um cartão para ver as mídias disponíveis.</p></div>
+      <div id="grid-aves" class="bird-grid" aria-live="polite"></div>
+    </section>
+  </main>
 
-        <section class="intro-container">
-            <p class="eyebrow">Pesquisa Hierárquica Avançada</p>
-            <h1 style="font-size: 58px; font-weight: 400; line-height: 1; margin: 0 0 15px 0;">
-                Descubra a <i>Avifauna</i> Brasileira
-            </h1>
-            <p style="color: #647168; font-size: 14px; line-height: 1.6; max-width: 500px; margin-bottom: 25px;">
-                Explore o acervo multimídia estruturado com Splay Tree
-            </p>
-        </section>
-
-        <div style="padding: 40px 70px 20px;">
-            <p class="eyebrow">Pesquisar Pássaro (Hierárquico / Splay Tree)</p>
-            <input type="text" id="input-busca" placeholder="Digite o nome popular ou científico..." style="padding: 12px; width: 100%; max-width: 400px; border: 1px solid var(--line); border-radius: 4px; font-family: 'Manrope';">
-            <div id="tree-status-box" style="margin-top: 15px; padding: 10px 16px; background: rgba(49, 88, 70, 0.08); border-left: 3px solid var(--moss); border-radius: 4px; font-size: 13px; color: var(--moss); display: flex; align-items: center; gap: 8px; max-width: 600px;">
-                <span>🌳 <b>Splay Tree:</b></span>
-                <span id="tree-root-display">Carregando...</span>
-            </div>
-        </div>
-
-        <main style="padding: 0 70px 60px;">
-            <p class="eyebrow">Acervo Selecionado</p>
-            <h2 style="font-size: 36px; font-weight: 400; margin-bottom: 30px;">Espécies Registradas</h2>
-            
-            <!-- Os cards serão injetados dinamicamente via JavaScript aqui -->
-            <div id="grid-aves" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;"></div>
-        </main>
-    </div>
-
-    <!-- TELA 2: DETALHES -->
-    <div id="tela-detalhe" class="pagina" style="display: none;">
-        <header class="catalog-header" style="justify-content: space-between;">
-            <div>
-                <b>DETALHES</b>
-                <small id="detalhe-numero"></small>
-            </div>
-            <button id="btn-voltar" style="padding: 8px 16px; cursor: pointer;">⬅ Voltar ao Início</button>
-        </header>
-
-        <div style="padding: 40px 70px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px;">
-            <div>
-                <p class="eyebrow">Espécie Selecionada</p>
-                <h1 id="detalhe-nome" style="font-size: 48px; margin: 0 0 5px 0;"></h1>
-                <p id="detalhe-cientifico" class="scientific-name"></p>
-                
-                <div style="margin-top: 25px; border-radius: 4px; overflow: hidden; border: 1px solid var(--line);">
-                    <img id="detalhe-img" style="width: 100%; height: 380px; object-fit: cover;">
-                </div>
-
-                <h3 style="margin-top: 25px;">🎵 Reproduzir Canto da Espécie</h3>
-                <audio id="detalhe-audio" controls style="width: 100%; margin-top: 10px;"></audio>
-            </div>
-
-            <div>
-                <p class="eyebrow">Dataset CUB-200</p>
-                <h2 style="font-size: 32px; margin-bottom: 20px;">Informações Técnicas</h2>
-                
-                <div class="meta-box">
-                    <small>FAMÍLIA & GÊNERO</small>
-                    <p id="detalhe-familia-genero"></p>
-                </div>
-                <div class="meta-box">
-                    <small>HABITAT</small>
-                    <p id="detalhe-habitat"></p>
-                </div>
-                <div class="meta-box">
-                    <small>DIETA</small>
-                    <p id="detalhe-dieta"></p>
-                </div>
-                <div class="meta-box">
-                    <small>STATUS</small>
-                    <p id="detalhe-status"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
+  <main id="detail-page" class="page detail-page" hidden>
+    <button id="btn-voltar" class="back-button" type="button">← Voltar ao catálogo</button>
+    <div id="detail-content"></div>
+  </main>
+  <footer><span>Bem-te-viz</span><span>Dados de espécies: CUB-200-2011 · uso educacional</span></footer>
+  <script type="module" src="/script.js"></script>
 </body>
 </html>

@@ -1,232 +1,211 @@
 import { SplayTree } from "../src/splay-tree.js";
+import { birdKey } from "../src/bird.js";
 
-// Catálogo de aves com conteúdo multimídia e metadados CUB-200
-const listaAves = [
-  {
-    id: 1,
-    numero: "001",
-    species: "Ararajuba",
-    nome_popular: "Ararajuba",
-    titulo: "Guaruba guarouba",
-    familia: "Psittacidae",
-    genero: "Guaruba",
-    recente: "Destaque",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red-shouldered_Hawk_2_%28cropped%29.jpg/800px-Red-shouldered_Hawk_2_%28cropped%29.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Bird_chirping_in_a_forest.ogg",
-    json_info: {
-      Habitat: "Floresta Ombrófila Densa (Amazônia)",
-      Dieta: "Sementes, frutos e bagas",
-      Status: "Vulnerável (VU)"
-    }
-  },
-  {
-    id: 2,
-    numero: "002",
-    species: "João-de-barro",
-    nome_popular: "João-de-barro",
-    titulo: "Furnarius rufus",
-    familia: "Furnariidae",
-    genero: "Furnarius",
-    recente: "Popular",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg/800px-Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Furnarius_rufus_call.ogg",
-    json_info: {
-      Habitat: "Áreas abertas, campos e zonas urbanas",
-      Dieta: "Insetos e artrópodes de solo",
-      Status: "Pouco Preocupante (LC)"
-    }
-  },
-  {
-    id: 3,
-    numero: "003",
-    species: "Tucano-toco",
-    nome_popular: "Tucano-toco",
-    titulo: "Ramphastos toco",
-    familia: "Ramphastidae",
-    genero: "Ramphastos",
-    recente: "Popular",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ramphastos_toco_-Pantanal%2C_Brazil_-8-4c_%28cropped%29.jpg/800px-Ramphastos_toco_-Pantanal%2C_Brazil_-8-4c_%28cropped%29.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Bird_chirping_in_a_forest.ogg",
-    json_info: {
-      Habitat: "Cerrado, matas de galeria e Pantanal",
-      Dieta: "Frutos, ovos e pequenos insetos",
-      Status: "Pouco Preocupante (LC)"
-    }
-  },
-  {
-    id: 4,
-    numero: "004",
-    species: "Bem-te-vi",
-    nome_popular: "Bem-te-vi",
-    titulo: "Pitangus sulphuratus",
-    familia: "Tyrannidae",
-    genero: "Pitangus",
-    recente: "Mais Acessada",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg/800px-Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Bird_chirping_in_a_forest.ogg",
-    json_info: {
-      Habitat: "Florestas, cidades e margens de rios",
-      Dieta: "Insetos, pequenos vertebrados e frutos",
-      Status: "Pouco Preocupante (LC)"
-    }
-  },
-  {
-    id: 5,
-    numero: "005",
-    species: "Arara-azul",
-    nome_popular: "Arara-azul",
-    titulo: "Anodorhynchus hyacinthinus",
-    familia: "Psittacidae",
-    genero: "Anodorhynchus",
-    recente: "Recente",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red-shouldered_Hawk_2_%28cropped%29.jpg/800px-Red-shouldered_Hawk_2_%28cropped%29.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Furnarius_rufus_call.ogg",
-    json_info: {
-      Habitat: "Pantanal e Cerrado",
-      Dieta: "Castanhas de palmeiras",
-      Status: "Vulnerável (VU)"
-    }
-  },
-  {
-    id: 6,
-    numero: "006",
-    species: "Sabiá-laranjeira",
-    nome_popular: "Sabiá-laranjeira",
-    titulo: "Turdus rufiventris",
-    familia: "Turdidae",
-    genero: "Turdus",
-    recente: "Nacional",
-    imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg/800px-Furnarius_rufus_-_Parque_Nacional_Itatiaia_-_Brazil_01.jpg",
-    audio: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Bird_chirping_in_a_forest.ogg",
-    json_info: {
-      Habitat: "Matas, pomares e parques urbanos",
-      Dieta: "Frutos e minhocas",
-      Status: "Pouco Preocupante (LC)"
-    }
-  }
-];
-
-// Inicialização da Estrutura Hierárquica (Splay Tree)
+const grid = document.querySelector("#grid-aves");
+const input = document.querySelector("#input-busca");
+const rootDisplay = document.querySelector("#tree-root-display");
+const resultCount = document.querySelector("#result-count");
+const sourceBadge = document.querySelector("#catalog-source");
+const catalogPage = document.querySelector("#catalog-page");
+const detailPage = document.querySelector("#detail-page");
+const detailContent = document.querySelector("#detail-content");
 const tree = new SplayTree();
-for (const ave of listaAves) {
-  tree.insert(ave);
+let birds = [];
+
+function mediaUrl(relativePath) {
+  return "/media/" + relativePath.replace(/^media\//, "").split("/").map(encodeURIComponent).join("/");
 }
 
-// Atualiza o indicador visual da Splay Tree no cabeçalho/busca
-function atualizarStatusArvore(msgExtra = "") {
-  const rootDisplay = document.getElementById("tree-root-display");
-  if (!rootDisplay) return;
-  const raizAtual = tree.rootSpecies ?? "Vazia";
-  rootDisplay.innerHTML = `Raiz Atual: <b>${raizAtual}</b> | Espécies cadastradas: <b>${tree.size}</b> ${msgExtra ? `— <i>${msgExtra}</i>` : ""}`;
+function setTreeStatus(message = "") {
+  const root = tree.rootSpecies || "vazia";
+  rootDisplay.textContent = `Raiz atual: ${root} · ${tree.size} espécies${message ? ` · ${message}` : ""}`;
 }
 
-// Renderiza os cards no grid
-function renderizarCards(aves) {
-  const grid = document.getElementById("grid-aves");
-  if (!grid) return;
-  grid.innerHTML = "";
+function createImage(path, species, className) {
+  if (!path) {
+    const placeholder = document.createElement("div");
+    placeholder.className = `${className} image-placeholder`;
+    placeholder.textContent = "Imagem não incluída na amostra";
+    return placeholder;
+  }
+  const img = document.createElement("img");
+  img.className = className;
+  img.src = mediaUrl(path);
+  img.alt = `Imagem de ${species}`;
+  img.loading = "lazy";
+  img.onerror = () => { img.replaceWith(createImage(null, species, className)); };
+  return img;
+}
 
-  if (aves.length === 0) {
-    grid.innerHTML = `<p style="grid-column: 1 / -1; color: #888; font-size: 16px;">Nenhuma ave encontrada na Splay Tree para o termo buscado.</p>`;
+function renderCards(items) {
+  grid.replaceChildren();
+  resultCount.textContent = `${items.length} ${items.length === 1 ? "espécie" : "espécies"}`;
+  if (!items.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "Nenhuma espécie encontrada para essa busca.";
+    grid.append(empty);
     return;
   }
-
-  aves.forEach((ave) => {
-    const card = document.createElement("div");
+  for (const bird of items) {
+    const card = document.createElement("button");
+    card.type = "button";
     card.className = "bird-card";
-    card.innerHTML = `
-      <div style="position: relative; height: 240px; background: #dce2da;">
-        <img src="${ave.imagem}" style="width: 100%; height: 100%; object-fit: cover;" alt="${ave.nome_popular}">
-        <div style="position: absolute; top: 15px; left: 15px; background: rgba(251,250,246,0.9); padding: 6px 10px; font-size: 8px; font-weight: 700; text-transform: uppercase; border-radius: 2px;">${ave.recente}</div>
-        <div style="position: absolute; right: 15px; bottom: 10px; color: white; font-family: 'DM Serif Display'; font-size: 22px; text-shadow: 0 1px 8px rgba(0,0,0,0.7);">${ave.numero}</div>
-      </div>
-      <div style="padding: 22px;">
-        <p class="eyebrow" style="margin-bottom: 6px;">${ave.familia}</p>
-        <h3 style="font-size: 24px; margin: 0 0 4px 0;">${ave.nome_popular}</h3>
-        <p class="scientific-name">${ave.titulo}</p>
-      </div>
-    `;
-
+    card.setAttribute("aria-label", `Abrir ${bird.species}`);
+    card.append(createImage(bird.images[0], bird.species, "card-image"));
+    const body = document.createElement("span");
+    body.className = "card-body";
+    const id = document.createElement("span");
+    id.className = "card-id";
+    id.textContent = `CUB · ${String(bird.id).padStart(3, "0")}`;
+    const title = document.createElement("span");
+    title.className = "card-title";
+    title.textContent = bird.species;
+    const meta = document.createElement("span");
+    meta.className = "card-meta";
+    meta.textContent = `${bird.images.length} ${bird.images.length === 1 ? "imagem" : "imagens"} · ${bird.audios.length} ${bird.audios.length === 1 ? "áudio" : "áudios"}`;
+    body.append(id, title, meta);
+    card.append(body);
     card.addEventListener("click", () => {
-      // Quando clica no card, realiza a busca na árvore afunilada
-      const resultado = tree.search(ave.nome_popular);
-      atualizarStatusArvore(`Acesso registrado para '${ave.nome_popular}' (Splay executado)`);
-      abrirDetalhes(resultado || ave);
+      const found = tree.search(bird.species) || bird;
+      setTreeStatus(`acesso a ${found.species}; frequência ${tree.getAccessCount(found.species)}`);
+      showDetails(found);
     });
-
-    grid.appendChild(card);
-  });
+    grid.append(card);
+  }
 }
 
-// Abre a tela de detalhes de uma ave
-function abrirDetalhes(ave) {
-  document.getElementById("tela-home").style.display = "none";
-  document.getElementById("tela-detalhe").style.display = "block";
-  window.scrollTo(0, 0);
+function showDetails(bird) {
+  catalogPage.hidden = true;
+  detailPage.hidden = false;
+  detailContent.replaceChildren();
+  const heading = document.createElement("div");
+  heading.className = "detail-heading";
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = `Registro CUB · ${String(bird.id).padStart(3, "0")}`;
+  const title = document.createElement("h1");
+  title.textContent = bird.species;
+  const label = document.createElement("p");
+  label.className = "original-label";
+  label.textContent = `Rótulo original: ${bird.originalLabel || bird.species}`;
+  heading.append(eyebrow, title, label);
 
-  document.getElementById("detalhe-numero").innerText = `REGISTRO #${ave.numero}`;
-  document.getElementById("detalhe-nome").innerText = ave.nome_popular;
-  document.getElementById("detalhe-cientifico").innerText = ave.titulo;
-  document.getElementById("detalhe-img").src = ave.imagem;
-  document.getElementById("detalhe-audio").src = ave.audio;
-  document.getElementById("detalhe-familia-genero").innerHTML = `<b>${ave.familia}</b> (${ave.genero})`;
-  document.getElementById("detalhe-habitat").innerText = ave.json_info.Habitat;
-  document.getElementById("detalhe-dieta").innerText = ave.json_info.Dieta;
-  document.getElementById("detalhe-status").innerText = ave.json_info.Status;
-}
-
-// Botão Voltar para o Catálogo
-const btnVoltar = document.getElementById("btn-voltar");
-if (btnVoltar) {
-  btnVoltar.addEventListener("click", () => {
-    document.getElementById("tela-detalhe").style.display = "none";
-    document.getElementById("tela-home").style.display = "block";
-    window.scrollTo(0, 0);
-  });
-}
-
-// Conexão do Campo de Busca com a Splay Tree
-const inputBusca = document.getElementById("input-busca");
-if (inputBusca) {
-  inputBusca.addEventListener("input", (e) => {
-    const termo = e.target.value.trim();
-
-    if (!termo) {
-      renderizarCards(listaAves);
-      atualizarStatusArvore();
-      return;
+  const layout = document.createElement("div");
+  layout.className = "detail-layout";
+  const mediaColumn = document.createElement("section");
+  mediaColumn.className = "detail-media";
+  const mainImage = createImage(bird.images[0], bird.species, "detail-image");
+  mediaColumn.append(mainImage);
+  const gallery = document.createElement("div");
+  gallery.className = "image-gallery";
+  let shownImages = 0;
+  const batchSize = 12;
+  const loadMoreImages = () => {
+    const end = Math.min(shownImages + batchSize, bird.images.length);
+    for (const imagePath of bird.images.slice(shownImages, end)) {
+      const thumbnail = document.createElement("button");
+      thumbnail.type = "button";
+      thumbnail.className = "gallery-thumbnail";
+      thumbnail.setAttribute("aria-label", `Exibir outra imagem de ${bird.species}`);
+      thumbnail.append(createImage(imagePath, bird.species, "thumbnail-image"));
+      thumbnail.addEventListener("click", () => {
+        if (mainImage instanceof HTMLImageElement) mainImage.src = mediaUrl(imagePath);
+      });
+      gallery.append(thumbnail);
     }
-
-    // Busca formal na Splay Tree
-    const aveEncontrada = tree.search(termo);
-
-    if (aveEncontrada) {
-      // A árvore encontrou a ave e a trouxe para a raiz / subnível
-      renderizarCards([aveEncontrada]);
-      atualizarStatusArvore(`'${aveEncontrada.nome_popular}' encontrada via Splay Tree!`);
-    } else {
-      // Busca parcial por prefixo nos nomes para tolerância a digitação incompleta
-      const filtradas = listaAves.filter(
-        (a) =>
-          a.nome_popular.toLowerCase().includes(termo.toLowerCase()) ||
-          a.titulo.toLowerCase().includes(termo.toLowerCase())
-      );
-      renderizarCards(filtradas);
-    }
-  });
-
-  inputBusca.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      const termo = inputBusca.value.trim();
-      const ave = tree.search(termo);
-      if (ave) {
-        atualizarStatusArvore(`'${ave.nome_popular}' pesquisada (Enter)`);
-        abrirDetalhes(ave);
-      }
-    }
-  });
+    shownImages = end;
+    moreImages.hidden = shownImages >= bird.images.length;
+  };
+  const moreImages = document.createElement("button");
+  moreImages.type = "button";
+  moreImages.className = "load-more";
+  moreImages.textContent = "Carregar mais imagens";
+  moreImages.addEventListener("click", loadMoreImages);
+  if (bird.images.length > 1) {
+    mediaColumn.append(gallery, moreImages);
+    loadMoreImages();
+  }
+  if (bird.images.length > 1) {
+    const caption = document.createElement("p");
+    caption.className = "media-caption";
+    caption.textContent = `${bird.images.length} imagens disponíveis; a galeria carrega 12 por vez.`;
+    mediaColumn.append(caption);
+  }
+  const audioColumn = document.createElement("section");
+  audioColumn.className = "audio-panel";
+  const audioTitle = document.createElement("h2");
+  audioTitle.textContent = "Gravações";
+  audioColumn.append(audioTitle);
+  if (!bird.audios.length) {
+    const noAudio = document.createElement("p");
+    noAudio.className = "muted-note";
+    noAudio.textContent = "Nenhuma gravação desta espécie foi incluída no pacote de demonstração.";
+    audioColumn.append(noAudio);
+  }
+  for (const audioPath of bird.audios) {
+    const audioBox = document.createElement("div");
+    audioBox.className = "audio-item";
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.preload = "none";
+    audio.src = mediaUrl(audioPath);
+    const match = audioPath.match(/_(\d+)\.(?:mp3|ogg|wav|m4a|flac)$/i);
+    if (match) {
+      const credit = document.createElement("a");
+      credit.href = `https://xeno-canto.org/${match[1]}`;
+      credit.target = "_blank";
+      credit.rel = "noreferrer";
+      credit.textContent = `Abrir origem Xeno-Canto XC${match[1]}`;
+      credit.className = "source-link";
+      audioBox.append(audio, credit);
+    } else audioBox.append(audio);
+    audioColumn.append(audioBox);
+  }
+  const datasetInfo = document.createElement("section");
+  datasetInfo.className = "dataset-info";
+  const infoTitle = document.createElement("h2");
+  infoTitle.textContent = "No conjunto de dados";
+  const info = document.createElement("p");
+  info.textContent = `Identificador CUB: ${bird.id}. O catálogo completo contém 200 espécies; esta exportação traz ${bird.images.length} imagem(ns) e ${bird.audios.length} gravação(ões) para esta espécie.`;
+  datasetInfo.append(infoTitle, info);
+  layout.append(mediaColumn, audioColumn, datasetInfo);
+  detailContent.append(heading, layout);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// Inicialização da Página
-renderizarCards(listaAves);
-atualizarStatusArvore();
+function refreshSearch() {
+  const query = birdKey(input.value);
+  if (!query) { renderCards([...tree.inOrder()]); setTreeStatus(); return; }
+  const exact = tree.search(input.value.trim());
+  if (exact) setTreeStatus(`busca exata por ${exact.species}`);
+  else setTreeStatus(`busca parcial por “${input.value.trim()}”`);
+  const found = [...tree.inOrder()].filter((bird) => birdKey(`${bird.species} ${bird.originalLabel || ""}`).includes(query));
+  renderCards(found);
+}
+
+document.querySelector("#btn-voltar").addEventListener("click", () => {
+  detailPage.hidden = true;
+  catalogPage.hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+input.addEventListener("input", refreshSearch);
+
+try {
+  const response = await fetch("/api/catalog", { cache: "no-store" });
+  if (!response.ok) throw new Error(`Servidor respondeu ${response.status}`);
+  const data = await response.json();
+  birds = data.birds;
+  for (const bird of birds) tree.insert(bird);
+  if (data.source === "demo") {
+    sourceBadge.textContent = "amostra local";
+    sourceBadge.hidden = false;
+    sourceBadge.title = "O pacote processado não estava disponível; catálogo local carregado.";
+  }
+  renderCards([...tree.inOrder()]);
+  setTreeStatus();
+} catch (error) {
+  rootDisplay.textContent = "Não foi possível carregar o catálogo.";
+  resultCount.textContent = "Confira se o servidor Node.js está em execução.";
+  console.error("Erro ao carregar catálogo:", error);
+}
