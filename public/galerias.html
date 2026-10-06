@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galerias · Bem-te-viz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/galerias.css">
+</head>
+<body data-page="galerias">
+  <div id="site-header"></div>
+
+  <main>
+    <!-- Lista de galerias -->
+    <div id="viewList">
+      <section class="hero">
+        <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span><span class="blob b5"></span>
+        <div class="wrap">
+          <h1>Galerias de <em>fotos</em></h1>
+          <p>Escolha uma ave e veja todas as fotos do acervo.</p>
+          <form class="search" id="form" role="search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+            <label for="q" style="position:absolute;left:-9999px">Buscar galeria</label>
+            <input id="q" type="search" placeholder="Busque por nome da espécie..." autocomplete="off">
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+      </section>
+      <div class="wrap">
+        <section class="sec" id="secTop" hidden>
+          <div class="sec-head"><h2>Mais pesquisadas</h2><p>As aves que você mais abriu neste navegador</p></div>
+          <ul class="cards top4" id="top4"></ul>
+        </section>
+        <section class="sec" id="secAll">
+          <div class="sec-head"><h2>Todas as galerias</h2></div>
+          <div class="toolbar"><div class="chips" id="chips" role="group"></div></div>
+          <p class="count" id="count" aria-live="polite">Carregando catálogo…</p>
+          <ul class="cards all" id="all"></ul>
+          <div class="empty" id="empty" hidden><h3>Nenhuma galeria encontrada</h3><p>Confira a grafia ou tente outro nome.</p></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Galeria da ave -->
+    <div id="viewGallery" hidden>
+      <section class="hero slim">
+        <span class="blob b1"></span><span class="blob b3"></span><span class="blob b4"></span>
+        <div class="wrap">
+          <a class="back" href="#/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Todas as galerias</a>
+          <h1 id="gName"></h1>
+          <p class="sub" id="gSub"></p>
+        </div>
+      </section>
+      <div class="wrap">
+        <section class="sec">
+          <div class="carousel" id="carousel" aria-roledescription="carrossel" aria-label="Fotos da espécie">
+            <div class="car-stage" id="carStage" aria-live="polite"></div>
+            <button class="nav-btn prev" id="prev" type="button" aria-label="Foto anterior"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <button class="nav-btn next" id="next" type="button" aria-label="Próxima foto"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+            <div class="car-counter" id="counter"></div>
+          </div>
+          <div class="strip-wrap">
+            <div class="strip-head"><strong>Todas as fotos</strong><span id="stripHint"></span></div>
+            <div class="strip" id="strip" role="list"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script type="module" src="js/pages/galerias.js"></script>
+</body>
+</html>

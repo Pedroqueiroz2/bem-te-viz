@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espécies · Bem-te-viz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/especies.css">
+</head>
+<body data-page="especies">
+  <div id="site-header"></div>
+
+  <main>
+    <!-- Lista de espécies -->
+    <div id="viewList">
+      <section class="hero">
+        <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span><span class="blob b5"></span>
+        <div class="wrap">
+          <h1>Encontre uma <em>espécie</em></h1>
+          <p>Busque pelo nome da ave, abra a página dela e ouça o canto.</p>
+          <form class="search" id="form" role="search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+            <label for="q" style="position:absolute;left:-9999px">Buscar espécie</label>
+            <input id="q" type="search" placeholder="Busque por nome da espécie..." autocomplete="off">
+            <button type="submit">Buscar</button>
+          </form>
+        </div>
+      </section>
+
+      <div class="wrap">
+        <section class="sec" id="secTop" hidden>
+          <div class="sec-head"><h2>Mais pesquisadas</h2><p>As aves que você mais abriu neste navegador</p></div>
+          <ul class="cards top4" id="top4"></ul>
+        </section>
+
+        <section class="sec" id="secAll">
+          <div class="sec-head"><h2>Todas as espécies</h2></div>
+          <div class="toolbar"><div class="chips" id="chips" role="group"></div></div>
+          <p class="count" id="count" aria-live="polite">Carregando catálogo…</p>
+          <ul class="cards all" id="all"></ul>
+          <div class="empty" id="empty" hidden><h3>Nenhuma espécie encontrada</h3><p>Confira a grafia ou tente outro nome.</p></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Página da espécie -->
+    <div id="viewSpecies" hidden>
+      <section class="hero slim">
+        <span class="blob b1"></span><span class="blob b3"></span><span class="blob b4"></span>
+        <div class="wrap">
+          <a class="back" href="#/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Todas as espécies</a>
+          <h1 id="spName"></h1>
+          <p class="sub" id="spSub"></p>
+        </div>
+      </section>
+      <div class="wrap">
+        <section class="sec">
+          <div class="species-stage">
+            <div class="photo" id="spPhoto" style="--tint:#5b8def"></div>
+            <div class="listen" id="spListen">
+              <h2><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></svg>Ouça o canto</h2>
+              <div class="bigplayer">
+                <button class="bigplay" id="bigplay" type="button" aria-label="Ouvir o canto">
+                  <svg class="i-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>
+                  <svg class="i-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>
+                </button>
+                <div class="wave" id="spWave" aria-hidden="true"></div>
+                <span class="time" id="spTime">0:00</span>
+              </div>
+              <span class="demo" id="spNote" hidden>sem gravação nesta amostra</span>
+              <a class="cta" id="spGallery" href="galerias.html" style="width:fit-content">Ver galeria de fotos</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="sec" id="secHist">
+          <div class="sec-head"><h2>Vistas recentemente</h2><p>Aves que você já abriu</p><button class="link" id="clearHist" type="button">Limpar histórico</button></div>
+          <ul class="hist" id="hist"></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script type="module" src="js/pages/especies.js"></script>
+</body>
+</html>
