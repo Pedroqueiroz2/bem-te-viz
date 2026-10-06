@@ -7,6 +7,9 @@ import { playAudio } from "../components/audio.js";
 const PLAY = '<svg class="i-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>'
   + '<svg class="i-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>';
 
+/** Foto da capa da inicial. Se ela não estiver no catálogo (ex.: amostra local), usa a primeira ave com foto. */
+const HERO_IMAGE = "media/images/182_3_Yellow_Warbler_0007_176616.jpg";
+
 const thumb = (bird, i = 0) => (bird?.images[i]
   ? `<img src="${mediaUrl(bird.images[i])}" alt="${esc(bird.species)}">`
   : placeholder(""));
@@ -26,7 +29,11 @@ ready.then(() => {
   const withImage = pick(10, (b) => b.images.length);
 
   // ilustração do topo e miniaturas dos atalhos usam fotos reais do catálogo
-  $("heroArt").innerHTML = withImage[0] ? thumb(withImage[0]) : placeholder("Sem fotos nesta amostra");
+  const heroBird = pick(1, (b) => b.images.includes(HERO_IMAGE))[0];
+  $("heroArt").classList.toggle("hero-zoom", !!heroBird);   // só a foto escolhida leva zoom
+  $("heroArt").innerHTML = heroBird
+    ? `<img src="${mediaUrl(HERO_IMAGE)}" alt="${esc(heroBird.species)}">`
+    : withImage[0] ? thumb(withImage[0]) : placeholder("Sem fotos nesta amostra");
   document.querySelectorAll(".sc-art").forEach((el, i) => { el.innerHTML = thumb(withImage[i + 1] ?? withImage[0]); });
 
   // destaque: as mais pesquisadas; enquanto não há visitas, as primeiras com foto
