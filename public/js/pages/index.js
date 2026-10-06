@@ -32,6 +32,8 @@ ready.then(() => {
   // destaque: as mais pesquisadas; enquanto não há visitas, as primeiras com foto
   const top = topBirds(4);
   const destaque = top.length ? top : withImage;
+  // a frase "enquanto você não abre nenhuma..." só faz sentido enquanto o ranking está vazio
+  if (top.length) $("destaqueTxt").textContent = "As aves mais pesquisadas por você, da mais para a menos acessada.";
   $("destaque").innerHTML = destaque.map((bird, i) => miniCard(bird, { href: speciesHref(bird), rank: top.length ? i + 1 : undefined })).join("");
 
   // mini players: aves que têm gravação
