@@ -1,6 +1,6 @@
 import "../core/layout.js";
 import { $, norm, esc, fotos } from "../core/util.js";
-import { ready, allBirds, openBird, accessCount, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
+import { ready, allBirds, searchBirds, openBird, accessCount, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
 import { miniCard } from "../components/cards.js";
 
 
@@ -10,10 +10,7 @@ const card = (bird, rank) => miniCard(bird, { href: galleryHref(bird), rank, bad
 function renderAll() {
   const term = norm($("q").value);
   const list = [];
-  for (const bird of allBirds()) {
-    if (term && !norm(`${bird.species} ${bird.originalLabel || ""}`).includes(term)) continue;
-    list.push(bird);
-  }
+  for (const bird of term ? searchBirds(term) : allBirds()) list.push(bird);
   $("all").innerHTML = list.map((bird) => card(bird)).join("");
   $("all").hidden = !list.length;
   $("empty").hidden = !!list.length;

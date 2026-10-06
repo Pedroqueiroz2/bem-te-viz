@@ -123,3 +123,61 @@ test("inserção preserva raiz consolidada (count > 1)", () => {
   assert.equal(t.depth("Bem-te-vi"), 0);
   assert.equal(t.depth("Canário"), 1);
 });
+
+/* ---- busca por prefixo ---- */
+const names = (list) => list.map((b) => b.species);
+const sample = () => {
+  const t = new SplayTree();
+  for (const s of ["Yellow Warbler", "American Crow", "American Goldfinch", "Sabiá", "Yellow throated Vireo", "Amazon Parrot", "Black Tern"]) {
+    t.insert({ species: s, image: "", audio: "" });
+  }
+  return t;
+};
+
+test("prefixo: devolve só quem começa com o texto, em ordem alfabética", () => {
+  assert.deepEqual(names(sample().searchPrefix("am")), ["Amazon Parrot", "American Crow", "American Goldfinch"]);
+  assert.deepEqual(names(sample().searchPrefix("yellow")), ["Yellow throated Vireo", "Yellow Warbler"]);
+});
+
+test("prefixo: ignora maiúscula e acento", () => {
+  assert.deepEqual(names(sample().searchPrefix("SABIA")), ["Sabiá"]);
+  assert.deepEqual(names(sample().searchPrefix("sabiá")), ["Sabiá"]);
+});
+
+test("prefixo: sem resultado devolve lista vazia; prefixo vazio devolve todas", () => {
+  assert.deepEqual(sample().searchPrefix("zz"), []);
+  assert.deepEqual(names(sample().searchPrefix("")), ["Amazon Parrot", "American Crow", "American Goldfinch", "Black Tern", "Sabiá", "Yellow throated Vireo", "Yellow Warbler"]);
+  assert.deepEqual(new SplayTree().searchPrefix("a"), []);
+});
+
+test("prefixo: não reorganiza a árvore nem conta como acesso", () => {
+  const t = sample();
+  const root = t.rootSpecies;
+  const before = t.getAccessCount("American Crow");
+  t.searchPrefix("am");
+  assert.equal(t.rootSpecies, root);
+  assert.equal(t.getAccessCount("American Crow"), before);
+});
+
+test("prefixo: confere com busca por força bruta em dados aleatórios", () => {
+  const t = new SplayTree();
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const all = [];
+  for (let i = 0; i < 600; i++) {
+    const s = Array.from({ length: 2 + Math.floor(rnd() * 5) }, () => "abcde"[Math.floor(rnd() * 5)]).join("");
+    all.push(s);
+    t.insert({ species: s, image: "", audio: "" });
+  }
+  const unique = [...new Set(all)].sort();
+  for (const prefix of ["a", "ab", "abc", "e", "ed", "ba", "x", "dd"]) {
+    assert.deepEqual(names(t.searchPrefix(prefix)), unique.filter((s) => s.startsWith(prefix)), `prefixo ${prefix}`);
+  }
+});
+
+test("prefixo: árvore bem desbalanceada (inserção em ordem) não estoura a pilha", () => {
+  const t = new SplayTree();
+  for (let i = 0; i < 20000; i++) t.insert({ species: `n${String(i).padStart(6, "0")}`, image: "", audio: "" });
+  assert.equal(t.searchPrefix("n0000").length, 100);
+  assert.equal(t.searchPrefix("n").length, 20000);
+});

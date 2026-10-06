@@ -1,5 +1,6 @@
 import { SplayTree } from "/src/splay-tree.js";
 import { FrequencyList, RecentList, DoublyLinkedList } from "/src/lists.js";
+import { birdKey } from "/src/bird.js";
 import { store } from "../core/util.js";
 
 const STATE_KEY = "bem-te-viz-state";
@@ -69,6 +70,24 @@ export const galleryHref = (bird) => `galerias.html#/galeria/${encodeURIComponen
 /** Todas as aves em ordem alfabética (percurso em ordem da árvore). */
 export function* allBirds() {
   yield* tree.inOrder();
+}
+
+/**
+ * Busca da barra de pesquisa. Primeiro vêm as aves cujo nome começa com o texto
+ * (busca por prefixo na árvore, que só visita os ramos da faixa); depois, as
+ * demais que contêm o texto no nome (varredura em ordem), sem repetir.
+ * Não reorganiza a árvore: digitar não conta como acesso.
+ */
+export function searchBirds(term) {
+  const key = birdKey(term);
+  const out = tree.searchPrefix(key);
+  if (!key) return out;
+  for (const bird of tree.inOrder()) {
+    const name = birdKey(bird.species);
+    if (name.startsWith(key)) continue;   // já veio da busca por prefixo
+    if (birdKey(`${bird.species} ${bird.originalLabel || ""}`).includes(key)) out.push(bird);
+  }
+  return out;
 }
 
 /** Abre uma ave: busca na árvore (afunila), registra nas listas e no log da sessão. */

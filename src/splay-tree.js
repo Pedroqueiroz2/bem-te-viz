@@ -235,6 +235,34 @@ export class SplayTree {
     return undefined;
   }
 
+  /**
+   * Aves cujo nome começa com `prefix` (sem acento nem maiúscula), em ordem
+   * alfabética. Aproveita a ordem da árvore: todos os nomes com o mesmo início
+   * ficam numa faixa contínua, então só desce pelos ramos que podem ter
+   * ocorrência (O(altura + k), com k resultados), sem olhar a árvore inteira.
+   * Prefixo vazio devolve todas. Não reorganiza a árvore nem conta como acesso.
+   * Iterativa (pilha própria): uma Splay Tree pode ficar bem desbalanceada.
+   */
+  searchPrefix(prefix) {
+    const key = birdKey(prefix);
+    const out = [];
+    const stack = [];
+    let node = this.#root;
+    while (node !== null || stack.length > 0) {
+      while (node !== null) {
+        stack.push(node);
+        // à esquerda só há chaves menores que a do nó: só vale descer se ela ainda pode ser >= prefixo
+        node = node.key > key ? node.left : null;
+      }
+      node = stack.pop();
+      const match = node.key.startsWith(key);
+      if (match) out.push(node.value);
+      // à direita só há chaves maiores: vale descer se o nó está antes da faixa ou dentro dela
+      node = match || node.key < key ? node.right : null;
+    }
+    return out;
+  }
+
   /** Percurso em ordem: pássaros ordenados por espécie. */
   *inOrder() {
     /** @type {SplayNode[]} */
