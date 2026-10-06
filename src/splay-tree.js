@@ -279,11 +279,23 @@ export class SplayTree {
     }
   }
 
-  /** Altura da árvore (0 se vazia). */
+  /**
+   * Altura da árvore (0 se vazia). Iterativa, por níveis: uma Splay Tree pode
+   * ficar bem funda (ex.: chaves inseridas em ordem), e a recursão estouraria a pilha.
+   */
   height() {
-    const h = (n) =>
-      n === null ? 0 : 1 + Math.max(h(n.left), h(n.right));
-    return h(this.#root);
+    let level = this.#root === null ? [] : [this.#root];
+    let height = 0;
+    while (level.length > 0) {
+      height++;
+      const next = [];
+      for (const node of level) {
+        if (node.left !== null) next.push(node.left);
+        if (node.right !== null) next.push(node.right);
+      }
+      level = next;
+    }
+    return height;
   }
 
   /** Splay top-down: traz para a raiz o nó com `key` (ou o último visitado). */
