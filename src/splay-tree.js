@@ -235,6 +235,34 @@ export class SplayTree {
     return undefined;
   }
 
+  /**
+   * Aves cujo nome começa com `prefix` (sem acento nem maiúscula), em ordem
+   * alfabética. Aproveita a ordem da árvore: todos os nomes com o mesmo início
+   * ficam numa faixa contínua, então só desce pelos ramos que podem ter
+   * ocorrência (O(altura + k), com k resultados), sem olhar a árvore inteira.
+   * Prefixo vazio devolve todas. Não reorganiza a árvore nem conta como acesso.
+   * Iterativa (pilha própria): uma Splay Tree pode ficar bem desbalanceada.
+   */
+  searchPrefix(prefix) {
+    const key = birdKey(prefix);
+    const out = [];
+    const stack = [];
+    let node = this.#root;
+    while (node !== null || stack.length > 0) {
+      while (node !== null) {
+        stack.push(node);
+        // à esquerda só há chaves menores que a do nó: só vale descer se ela ainda pode ser >= prefixo
+        node = node.key > key ? node.left : null;
+      }
+      node = stack.pop();
+      const match = node.key.startsWith(key);
+      if (match) out.push(node.value);
+      // à direita só há chaves maiores: vale descer se o nó está antes da faixa ou dentro dela
+      node = match || node.key < key ? node.right : null;
+    }
+    return out;
+  }
+
   /** Percurso em ordem: pássaros ordenados por espécie. */
   *inOrder() {
     /** @type {SplayNode[]} */
@@ -251,11 +279,23 @@ export class SplayTree {
     }
   }
 
-  /** Altura da árvore (0 se vazia). */
+  /**
+   * Altura da árvore (0 se vazia). Iterativa, por níveis: uma Splay Tree pode
+   * ficar bem funda (ex.: chaves inseridas em ordem), e a recursão estouraria a pilha.
+   */
   height() {
-    const h = (n) =>
-      n === null ? 0 : 1 + Math.max(h(n.left), h(n.right));
-    return h(this.#root);
+    let level = this.#root === null ? [] : [this.#root];
+    let height = 0;
+    while (level.length > 0) {
+      height++;
+      const next = [];
+      for (const node of level) {
+        if (node.left !== null) next.push(node.left);
+        if (node.right !== null) next.push(node.right);
+      }
+      level = next;
+    }
+    return height;
   }
 
   /** Splay top-down: traz para a raiz o nó com `key` (ou o último visitado). */

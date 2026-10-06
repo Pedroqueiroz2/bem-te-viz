@@ -4,7 +4,7 @@ Catálogo multimídia do CUB-200-2011. O Node.js entrega a página HTML/CSS, uma
 
 ## Executar
 
-Requer Node.js 18 ou mais recente.
+Requer Node.js 18 ou mais recente para rodar o app e Node.js 22 ou mais recente para os testes.
 
 ```sh
 npm start
@@ -46,8 +46,12 @@ Depois de baixar `bem-te-viz-package.zip` da saída do Kaggle, extraia-o em `dat
 ## Testes
 
 ```sh
-npm test
+npm test          # estruturas de dados, carregador do catálogo e servidor
+npm run test:e2e  # interface em um Chrome real (desktop), com um catálogo de teste
+npm run test:heavy # estruturas com muitos dados (100 mil nós), aleatórios e comparação com gabarito
 ```
+
+Os testes de interface precisam do Google Chrome instalado (ou da variável `CHROME_PATH` apontando para ele); sem ele, são pulados. Cobrem a busca, a página da espécie, o carrossel, as galerias, a ordem do ranking, o histórico, o contador, o F5 e o reinício do servidor, além de casos de borda (ave sem foto ou áudio, nome com HTML, endereço inexistente, armazenamento do navegador bloqueado). Não há testes para celular.
 
 ## Fontes e créditos
 
