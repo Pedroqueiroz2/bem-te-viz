@@ -1,11 +1,10 @@
 import "../core/layout.js";
 import { $, norm, fmt, rng, esc, fotos, plural } from "../core/util.js";
 import {
-  ready, meta, allBirds, openBird, neighbors, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
+  ready, meta, allBirds, openBird, accessCount, neighbors, recentBirds, clearRecent, mediaUrl, speciesHref, galleryHref,
 } from "../data/catalog.js";
 import { miniCard, birdImage } from "../components/cards.js";
 import { playAudio, audioDuration } from "../components/audio.js";
-import { mountTreeBadge, updateTreeBadge } from "../components/tree-badge.js";
 
 const BARS = 56;
 let stopFn = null;
@@ -138,11 +137,10 @@ function openSpecies(name) {
   const bird = openBird(name);            // busca na árvore (afunila) e registra nas listas
   if (!bird) { location.hash = "#/"; return; }
   current = bird;
-  updateTreeBadge(bird.species);
 
   document.title = `${bird.species} · Bem-te-viz`;
   $("spName").textContent = bird.species;
-  $("spSub").textContent = `${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")}`;
+  $("spSub").textContent = `${fotos(bird.images.length)} · ${plural(bird.audios.length, "áudio", "áudios")} · contador ${accessCount(bird.species)}`;
   const around = neighbors(bird.species);
   for (const [id, target] of [["prevBird", around.prev], ["nextBird", around.next]]) {
     const link = $(id);
@@ -200,14 +198,12 @@ function route() {
     resetAudio();
     current = null;
     document.title = "Espécies · Bem-te-viz";
-    updateTreeBadge();
     renderAll();
   }
   window.scrollTo(0, 0);
 }
 
 ready.then(() => {
-  mountTreeBadge();
   const q = new URLSearchParams(location.search).get("q");
   if (q) $("q").value = q;
   window.addEventListener("hashchange", route);

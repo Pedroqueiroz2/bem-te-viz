@@ -117,10 +117,5 @@ button, input { font: inherit; color: inherit; }
 .f1 { width: 90px; height: 90px; background: var(--yellow); left: -34px; bottom: -44px; }
 .f2 { width: 70px; height: 70px; background: var(--green); right: -26px; bottom: -30px; }
 
-/* Bloquinho da árvore (canto superior direito) */
-.tree-badge { position: fixed; top: 78px; right: 16px; z-index: 15; display: flex; flex-direction: column; gap: 1px; max-width: 220px; padding: 9px 13px; border-radius: 14px; background: var(--navy); color: var(--navy-ink); box-shadow: 0 6px 20px rgba(16, 32, 63, .28); font-size: 12px; line-height: 1.35; }
-.tree-badge small { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--yellow); }
-.tree-badge b { font-family: var(--display); font-size: 13px; overflow-wrap: anywhere; }
-.tree-badge span { opacity: .85; font-variant-numeric: tabular-nums; }
-.tree-badge .tb-cur { margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,.2); opacity: 1; color: #fff; }
-@media (max-width: 760px) { .tree-badge { top: auto; bottom: 12px; right: 12px; max-width: 190px; } }
+/* Contador de acessos da ave (no cartão dela) */
+.cnt { position: absolute; right: 10px; bottom: 10px; z-index: 1; min-width: 26px; text-align: center; padding: 3px 9px; border-radius: 999px; background: rgba(16,32,63,.78); color: #fff; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }

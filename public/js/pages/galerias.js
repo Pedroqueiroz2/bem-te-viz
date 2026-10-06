@@ -1,8 +1,7 @@
 import "../core/layout.js";
 import { $, norm, esc, fotos } from "../core/util.js";
-import { ready, allBirds, openBird, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
+import { ready, allBirds, openBird, accessCount, recentBirds, clearRecent, mediaUrl, galleryHref } from "../data/catalog.js";
 import { miniCard } from "../components/cards.js";
-import { mountTreeBadge, updateTreeBadge } from "../components/tree-badge.js";
 
 
 const card = (bird, rank) => miniCard(bird, { href: galleryHref(bird), rank, badge: fotos(bird.images.length) });
@@ -32,11 +31,10 @@ $("form").addEventListener("submit", (e) => { e.preventDefault(); renderAll(); $
 function openGallery(name) {
   const bird = openBird(name);   // busca na árvore (afunila) e conta como acesso
   if (!bird) { location.hash = "#/"; return; }
-  updateTreeBadge(bird.species);
   const n = bird.images.length;
   document.title = `${bird.species} · Galeria · Bem-te-viz`;
   $("gName").textContent = bird.species;
-  $("gSub").textContent = n ? fotos(n) : "Sem fotos nesta amostra";
+  $("gSub").textContent = `${n ? fotos(n) : "Sem fotos nesta amostra"} · contador ${accessCount(bird.species)}`;
   $("photoGrid").innerHTML = bird.images.map((path, k) =>
     `<li><a href="${mediaUrl(path)}" target="_blank" rel="noopener" aria-label="Abrir a foto ${k + 1} em tamanho original"><img src="${mediaUrl(path)}" alt="${esc(bird.species)}, foto ${k + 1}" loading="lazy"></a></li>`).join("");
   $("gEmpty").hidden = n > 0;
@@ -51,14 +49,12 @@ function route() {
     openGallery(decodeURIComponent(m[1]));
   } else {
     document.title = "Galerias · Bem-te-viz";
-    updateTreeBadge();
     renderAll();
   }
   window.scrollTo(0, 0);
 }
 
 ready.then(() => {
-  mountTreeBadge();
   window.addEventListener("hashchange", route);
   route();
 }).catch((error) => {

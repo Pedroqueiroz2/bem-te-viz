@@ -1,7 +1,6 @@
 import "../core/layout.js";
 import { $, esc, fmt, placeholder } from "../core/util.js";
 import { ready, allBirds, topBirds, mediaUrl, speciesHref } from "../data/catalog.js";
-import { mountTreeBadge } from "../components/tree-badge.js";
 import { miniCard } from "../components/cards.js";
 import { playAudio } from "../components/audio.js";
 
@@ -24,7 +23,6 @@ function pick(n, test) {
 }
 
 ready.then(() => {
-  mountTreeBadge();
   const withImage = pick(10, (b) => b.images.length);
 
   // ilustração do topo e miniaturas dos atalhos usam fotos reais do catálogo

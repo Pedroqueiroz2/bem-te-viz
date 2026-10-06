@@ -80,6 +80,9 @@ export function openBird(name) {
   return bird;
 }
 
+/** Contador de acessos da ave na árvore (sem reorganizar). */
+export const accessCount = (name) => tree.getAccessCount(name);
+
 /** Ave anterior e próxima (null no começo e no fim da lista), sem reorganizar a árvore. */
 export function neighbors(name) {
   const node = browse.find(name);

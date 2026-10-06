@@ -1,5 +1,5 @@
 import { esc, placeholder } from "../core/util.js";
-import { mediaUrl } from "../data/catalog.js";
+import { mediaUrl, accessCount } from "../data/catalog.js";
 
 const IMG_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>';
 
@@ -23,6 +23,7 @@ export function miniCard(bird, { href, rank, badge } = {}) {
       ${rank ? `<span class="rank" aria-label="${rank}º mais pesquisada">${rank}</span>` : ""}
       ${birdImage(bird)}
       ${badge ? `<span class="badge">${IMG_ICON}${badge}</span>` : ""}
+      <span class="cnt" title="Contador de acessos desta ave na árvore" aria-label="Contador de acessos: ${accessCount(bird.species)}">${accessCount(bird.species)}</span>
     </div>
     <h3 class="name">${esc(bird.species)}</h3></a></li>`;
 }
