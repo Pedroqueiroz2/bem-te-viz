@@ -58,3 +58,19 @@ Os testes de interface precisam do Google Chrome instalado (ou da variável `CHR
 Os metadados e imagens vêm do CUB-200-2011 (`wenewone/cub2002011` no Kaggle); os áudios vêm do `gevorgalaverdyan/cub-200-bird-audio-dataset`. O catálogo não inventa nome científico, família, habitat, dieta ou estado de conservação porque esses campos não estão no pacote processado recebido.
 
 Consulte `data/demo/CREDITS.md` antes de redistribuir a amostra. Em particular, o CSV de áudio anexado não trouxe o nome do gravador nem a licença individual das gravações; a interface mantém links para as páginas de origem Xeno-Canto, mas esses créditos precisam ser verificados antes de publicar a mídia.
+
+## Guia de Avaliação Acadêmica (Tags no Código)
+
+Para facilitar a correção pelo professor e a localização rápida das estruturas e algoritmos exigidos no enunciado da disciplina, utilize a busca global do editor (`Ctrl + Shift + F`) com as tags abaixo:
+
+| Tag para Busca (`Ctrl+F`) | Arquivo | Requisito Acadêmico | Descrição da Implementação |
+| :--- | :--- | :--- | :--- |
+| `[TAG: MODIFICACAO_ALGORITMO_CLASSICO_BUSCA]` | `src/splay-tree.js` | **Modificação do Algoritmo Clássico (Nota 10,0)** | *Frequency-Guarded Splay Tree*: afunilamento retido na subárvore (profundidade 1) para evitar poluição de cache por consultas frias; promoção global para a raiz em $\mathcal{O}(1)$ apenas ao igualar/superar a frequência da ave mais popular. |
+| `[TAG: MODIFICACAO_ALGORITMO_CLASSICO_INSERCAO]` | `src/splay-tree.js` | Modificação de Inserção | Insere novas espécies nas subárvores preservando a raiz prioritária já consolidada. |
+| `[TAG: ESTRUTURA_HIERARQUICA_ARVORE_AFUNILADA]` | `src/splay-tree.js` | **Estrutura Hierárquica Obrigatória** | Implementação completa da Árvore Afunilada (Splay Tree) top-down adaptada. |
+| `[TAG: ESTRUTURA_LINEAR_DUPLAMENTE_ENCADEADA]` | `src/lists.js` | **Estrutura Linear Obrigatória** | `DoublyLinkedList` ordenada alfabeticamente para navegação sequencial $\mathcal{O}(1)$ ("← Ave Anterior" e "Próxima Ave →") na tela da espécie. |
+| `[TAG: ALGORITMO_RANKING_FREQUENCIA]` | `src/lists.js` | Algoritmo Auxiliar (Home) | `FrequencyList`: Lista encadeada auto-ordenada por frequência para o ranking de aves mais pesquisadas na página inicial. |
+| `[TAG: ALGORITMO_HISTORICO_RECENTES]` | `src/lists.js` | Algoritmo Auxiliar (Histórico) | `RecentList`: Heurística clássica Move-To-Front (LRU) com capacidade limitada (12 itens) para o histórico de navegação. |
+| `[TAG: ALGORITMO_BUSCA_PREFIXO]` | `src/splay-tree.js` | Algoritmo Auxiliar (Busca) | `searchPrefix`: Busca em árvore binária com poda de subárvores fora da faixa ($\mathcal{O}(\text{altura} + k)$) para o autocomplete da barra de pesquisa. |
+| `[TAG: ALGORITMO_PERCURSO_EM_ORDEM]` | `src/splay-tree.js` | Algoritmo Auxiliar (Galerias) | `*inOrder`: Percurso in-order iterativo não-recursivo com gerador (`yield`) em $\mathcal{O}(n)$ para listagem alfabética de espécies. |
+

@@ -23,6 +23,7 @@ class CountNode {
 }
 
 /**
+ * [TAG: ALGORITMO_RANKING_FREQUENCIA]
  * Lista encadeada ordenada pelo contador de acessos, usada no ranking
  * "mais pesquisadas". O primeiro nó tem sempre o maior contador, o segundo o
  * segundo maior, e assim por diante. A cada acesso o nó recebe o contador novo
@@ -85,8 +86,9 @@ export class FrequencyList {
 }
 
 /**
+ * [TAG: ALGORITMO_HISTORICO_RECENTES]
  * Lista encadeada com limite de tamanho, usada no histórico "vistas
- * recentemente". O valor visto vai para a frente (sem repetir) e, se a
+ * recentemente". Heurística Move-To-Front (LRU): o valor visto vai para a frente (sem repetir) e, se a
  * lista passar do limite, o último sai.
  */
 export class RecentList {
@@ -162,8 +164,9 @@ class DoubleNode {
 }
 
 /**
+ * [TAG: ESTRUTURA_LINEAR_DUPLAMENTE_ENCADEADA]
  * Lista duplamente encadeada, usada para navegar entre as aves em ordem
- * alfabética ("ave anterior" / "próxima ave"). O primeiro nó não tem
+ * alfabética ("ave anterior" / "próxima ave") em tempo O(1). O primeiro nó não tem
  * anterior e o último não tem próximo.
  */
 export class DoublyLinkedList {

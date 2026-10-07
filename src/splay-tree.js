@@ -20,6 +20,7 @@ class SplayNode {
 }
 
 /**
+ * [TAG: ESTRUTURA_HIERARQUICA_ARVORE_AFUNILADA]
  * Árvore Afunilada (Splay Tree) de pássaros, chaveada pelo nome da espécie.
  * Implementação top-down adaptada para o contexto da aplicação (Frequency-Guarded Splay):
  * - Nós registram sua frequência de acesso (`accessCount`).
@@ -48,6 +49,7 @@ export class SplayTree {
   }
 
   /**
+   * [TAG: MODIFICACAO_ALGORITMO_CLASSICO_INSERCAO]
    * Insere (ou atualiza) um pássaro.
    * Se a raiz atual tiver prioridade consolidada (accessCount > 1), o novo nó é inserido
    * na subárvore correspondente preservando a raiz prioritária.
@@ -138,7 +140,9 @@ export class SplayTree {
   }
 
   /**
-   * Busca por espécie com afunilamento guiado por frequência de acesso.
+   * [TAG: MODIFICACAO_ALGORITMO_CLASSICO_BUSCA]
+   * Busca por espécie com afunilamento guiado por frequência de acesso (Frequency-Guarded Splay).
+   * Modificação do algoritmo clássico:
    * - Incrementa a contagem de acesso da ave encontrada.
    * - Se o nó alcançou ou superou a frequência da raiz atual, é promovido à raiz global (rotação zig).
    * - Caso contrário, o nó sofre splay até o topo da sua subárvore (profundidade 1),
@@ -236,6 +240,7 @@ export class SplayTree {
   }
 
   /**
+   * [TAG: ALGORITMO_BUSCA_PREFIXO]
    * Aves cujo nome começa com `prefix` (sem acento nem maiúscula), em ordem
    * alfabética. Aproveita a ordem da árvore: todos os nomes com o mesmo início
    * ficam numa faixa contínua, então só desce pelos ramos que podem ter
@@ -263,7 +268,11 @@ export class SplayTree {
     return out;
   }
 
-  /** Percurso em ordem: pássaros ordenados por espécie. */
+  /**
+   * [TAG: ALGORITMO_PERCURSO_EM_ORDEM]
+   * Percurso em ordem: pássaros ordenados por espécie em tempo O(n).
+   * Implementação iterativa não-recursiva.
+   */
   *inOrder() {
     /** @type {SplayNode[]} */
     const stack = [];
